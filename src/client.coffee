@@ -1,4 +1,4 @@
 app = require('dyz/Peer')
-appview = require('nanowar/views/AppView')
+appview = require('xenon/views/AppView')
 window.App = new app
 window.AppView = new appview model: window.App

@@ -1,14 +1,11 @@
-Cell              = require('nanowar/entities/Cell')
-Player            = require('nanowar/entities/Player')
-Fleet             = require('nanowar/entities/Fleet')
-EnhancerNode      = require('nanowar/entities/EnhancerNode')
+Ship              = require('xenon/entities/Ship')
 World  = require('dyz/World')
 _                 = require 'underscore'
 Backbone          = require 'backbone'
 
 module.exports = class Game extends Backbone.Model
   initialize: ->
-    etypes = Cell: Cell, Player: Player, Fleet: Fleet, EnhancerNode: EnhancerNode
+    etypes = Ship: Ship
     @world = new World etypes
 
     @serverUpdates = {}
@@ -40,25 +37,8 @@ module.exports = class Game extends Backbone.Model
     @tellQueue = []
     @sendQueue = []
   
-  getWinner: ->
-    owners = []
-    for cell in @world.getEntitiesOfType('Cell')
-      cellOwner = cell.getRelation 'owner'
-      owners.push cellOwner if cellOwner && owners.indexOf(cellOwner) == -1
-    
-    if owners.length == 1
-      owners[0]
-    else
-      null
-
-  loadMap: ->
-    players = @world.getEntitiesOfType('Player')
-    c1 = @world.spawn 'Cell', x: 350, y: 100, size: 50
-    @world.spawn 'Cell', x: 350, y: 300, size: 30, owner_id: players[0].id
-    @world.spawn 'Cell', x: 100, y: 200, size: 50
-    @world.spawn 'Cell', x: 500, y: 200, size: 50
-    @world.spawn 'Cell', x: 550, y: 100, size: 30, owner_id: players[1].id
-    @world.spawn 'EnhancerNode', x: 440, y: 120, owner_id: players[1].id
+  addShip: (attributes) ->
+    @world.spawn 'Ship', attributes
   
   tellSelf: (what, args...) ->
     tell = to: '$self', what: what, with: args
@@ -165,10 +145,6 @@ module.exports = class Game extends Backbone.Model
       @world.each (ent) =>
         ent.update && ent.update()
         @world.remove(ent) if ent.get('dead')
-
-    if winner = @getWinner()
-      @trigger 'end', winner: winner
-      @halt()
 
     expectedPassedTicks = (new Date().getTime() - @timeAtRun) / 1000 * Game.ticksPerSecond
     syncError = (@ticks - expectedPassedTicks).toFixed(1)
