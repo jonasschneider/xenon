@@ -14,3 +14,6 @@ module.exports = class GameOnServer extends DyzGameOnServer
   moveStuff: ->
     _(@world.getEntitiesOfType('Ship')).each (ship) ->
       ship.set xrot: ship.get('xrot') + 0.5
+
+  shootStuff: ->
+    @world.spawn 'Rocket'

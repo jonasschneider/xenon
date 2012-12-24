@@ -21,6 +21,10 @@ module.exports = class GameView extends Backbone.View
       console.warn "click occured at #{@model.ticks}"
       @model.queueClientCommand 'moveStuff'
 
+    $("#shoot-btn").click =>
+      console.warn "click occured at #{@model.ticks}"
+      @model.queueClientCommand 'shootStuff'
+
     ng = new GameNetGraphView model: @model, gameView: this
     @container.append ng.render().el
 

@@ -1,5 +1,6 @@
 Backbone = require 'backbone'
 ShipView = require './ShipView'
+RocketView = require './RocketView'
 
 module.exports = class GameView extends Backbone.View
   initialize: (options) ->
@@ -15,8 +16,12 @@ module.exports = class GameView extends Backbone.View
         @scene.add shipv.el
         @subviews.push shipv
 
+      when 'Rocket'
+        rv = new RocketView model: e  
+        @scene.add rv.el
+        @subviews.push rv
       else
-        console.error "wtf is a #{e.type}?", e
+        console.error "wtf is a #{e.entityTypeName}?", e
 
   setupScene: ->
     # set the @scene size
