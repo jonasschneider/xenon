@@ -4,7 +4,8 @@ _                 = require 'underscore'
 
 module.exports = class GameCommon
   entityTypes: {}
-  log: ->
+  log: (stuff...) ->
+    console.info stuff...
 
   constructor: ->
     @ticks = 0
@@ -13,6 +14,7 @@ module.exports = class GameCommon
   
   halt: ->
     console.log 'HALTING'
+    @trigger 'halt'
     @running = false
   
   tick: ->
@@ -46,9 +48,9 @@ module.exports = class GameCommon
       realtimeForNextTick = @tickZeroTime + (@ticks * GameCommon.tickLength)
       timeout = realtimeForNextTick - new Date().getTime()
 
-      if val < 0 # see tickClient()
-        @log "skewing clock to get rid of lag"
-        timeout += 10
+      #if val < 0 # see tickClient()
+      #  @log "skewing clock to get rid of lag"
+      #  timeout += 10
 
       if timeout < 0
         console.warn "WARNING: desynched, scheduling next tick immediately"

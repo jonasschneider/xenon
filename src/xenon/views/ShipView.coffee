@@ -17,6 +17,10 @@ module.exports = class ShipView extends Backbone.View
 
   render: (time) ->
     @el.rotation.x = @model.interpolate 'xrot', time
-    if @model.get('xrot') - @prev > 0.1
-      console.warn "rotate occured at #{@model.ticks()}"
-    @prev = @model.get('xrot')
+    @el.position.x = @model.interpolate 'x', time
+
+    dx = @prev - @model.interpolate('x', time)
+    if dx < 0
+      console.log("less")
+    
+    @prev = @model.interpolate 'x', time

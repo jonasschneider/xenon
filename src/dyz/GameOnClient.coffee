@@ -51,7 +51,7 @@ module.exports = class GameOnClient extends GameCommon
 
       lastAppliedUpdate = @serverUpdates[next]
       if lastAppliedUpdate
-        @world.applyMutation(lastAppliedUpdate.entityMutation)
+        @world.applyMutationWithInterpolationCheckpoint(lastAppliedUpdate.entityMutation)
       else
         console.error 'tried to apply mutation, but did not have dataz'
         console.error lastAppliedUpdate, next, @serverUpdates

@@ -41,6 +41,13 @@ module.exports = class GameView extends Backbone.View
     @controls.rollSpeed = Math.PI / 6
     @controls.autoForward = false
     @controls.dragToLook = true
+
+    @halt = false
+    @model.bind 'halt', =>
+      @halt = true
+
+    @model.bind 'read-controls', =>
+      @model.inputState.move = @controls.moveState
     
     setTimeout =>
       @trigger 'ready'
@@ -57,7 +64,7 @@ module.exports = class GameView extends Backbone.View
     #@canvas.getContext("2d").clearRect(0,0,700,500)
     #f.render(time) for f in @fleetvs
 
-    requestAnimFrame _(@render).bind(this)
+    requestAnimFrame _(@render).bind(this) unless @halt
 
   updateObjects: ->
     console.log 'update call'

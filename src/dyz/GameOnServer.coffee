@@ -7,13 +7,18 @@ module.exports = class extends GameCommon
   constructor: ->
     super
     @tellQueue = []
+    @playerInput = {}
 
     @bind 'update', (e) =>
       console.info "game got update ", JSON.stringify(e)
 
       if e.commands # for one-off commands
-        console.info "received client input for tick #{e.ticks} at server tick #{@ticks}"
         @tellQueue.push(to: '$self', what: cmd[0], with: cmd[1]) for cmd in e.commands
+
+      if e.inputState
+        console.info "received client input for tick #{e.ticks} at server tick #{@ticks}"
+        @playerInput["Player0"] = e.inputState
+        
 
   tellSelf: (what, args...) ->
     tell = to: '$self', what: what, with: args
@@ -41,7 +46,7 @@ module.exports = class extends GameCommon
     entityMutation = @world.mutate =>
       @runTellQueue()
       @world.each (ent) =>
-        ent.update && ent.update()
+        ent.update && ent.update(@playerInput)
         @world.remove(ent) if ent.get('dead')
 
     expectedPassedTicks = (new Date().getTime() - @tickZeroTime) / 1000 * GameCommon.ticksPerSecond

@@ -38,6 +38,22 @@ describe 'WorldState', ->
       expect(@state.interpolate('a', 0.5)).toBe 5
       expect(@state.interpolate('a', 1)).toBe 5
 
+    it 'stops interpolation', -> 
+      @state.set 'a', 5
+      @state.interpolationCheckpoint()
+      expect(@state.interpolate('a', 0)).toBe 5
+      
+      @state.set 'a', 6
+      @state.interpolationCheckpoint()
+      expect(@state.interpolate('a', 0)).toBe 5
+      expect(@state.interpolate('a', 1)).toBe 6
+
+      # no change anymore
+      @state.interpolationCheckpoint()
+      expect(@state.interpolate('a', 0)).toBe 6
+      expect(@state.interpolate('a', 1)).toBe 6
+
+
   describe '#mutate', ->
     it 'works', -> 
       m = @state.mutate =>

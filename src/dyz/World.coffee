@@ -136,6 +136,14 @@ module.exports = class World
       arg = data
     @get(entId).trigger name, arg
 
+  # apply the mutation, and then set an interpolation checkpoint.
+  # this means that state values that have not been changed since the
+  # last checkpoint will not be interpolated anymore. this is the case
+  # after a movement has stopped.
+  # see WorldState.spec
+  applyMutationWithInterpolationCheckpoint: (mutation) ->
+    @applyMutation(mutation)
+    @state.interpolationCheckpoint()
 
   #
   # STATE PROXIES, SNAPSHOTS

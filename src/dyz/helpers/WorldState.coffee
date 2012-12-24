@@ -6,12 +6,17 @@ module.exports = class WorldState
     @internalState = {}
     @previousValues = {}
     @events = {}
+    @dirty = []
+    @previousDirty = []
     @strictMode = false
 
   registerEvent: (name, cb) ->
     @events[name] = cb
 
   set: (k, v) ->
+    @dirty.push k
+    console.log("change #{k}: #{@internalState[k]} -> #{v}")
+
     @previousValues[k] = @internalState[k]
     @internalState[k] = v
     @_recordMutation ['changed', k, v]
@@ -75,6 +80,13 @@ module.exports = class WorldState
 
   applySnapshot: (snapshot) ->
     @internalState = snapshot
+
+  interpolationCheckpoint: ->
+    stopped_changing = _.difference(@previousDirty, @dirty)
+    _(stopped_changing).each (k) =>
+      delete @previousValues[k]
+    @previousDirty = @dirty
+    @dirty = []
 
   interpolate: (key, fraction) ->
     v1 = @previousValues[key]
