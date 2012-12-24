@@ -1,6 +1,7 @@
 Backbone = require 'backbone'
 GameNetGraphView = require 'dyz/views/GameNetGraphView'
 
+FlyControls = require 'xenon/helpers/FlyControls'
 WorldView = require './WorldView'
 _                 = require 'underscore'
 
@@ -32,6 +33,12 @@ module.exports = class GameView extends Backbone.View
     @container.append @worldv.el
 
     requestAnimFrame _(@render).bind(this)
+
+    controls = new FlyControls(@worldv.camera, @worldv.el)
+    controls.movementSpeed = 2500
+    controls.rollSpeed = Math.PI / 6
+    controls.autoForward = false
+    controls.dragToLook = false
     
     setTimeout =>
       @trigger 'ready'

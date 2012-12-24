@@ -1,6 +1,6 @@
 Backbone = require 'backbone'
 
-module.exports = class ShipView extends Backbone.View
+module.exports = class StationView extends Backbone.View
   el: true
 
   initialize: (options) ->
@@ -12,11 +12,9 @@ module.exports = class ShipView extends Backbone.View
     
     sphereMaterial = new THREE.MeshLambertMaterial(color: 0xCC0000, wireframe: true)
     @el = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, rings), sphereMaterial)
-    @prev = 0
     @worldView.scene.add @el
+    @prev = 0
 
   render: (time) ->
-    @el.rotation.x = @model.interpolate 'xrot', time
-    if @model.get('xrot') - @prev > 0.1
-      console.warn "rotate occured at #{@model.ticks()}"
-    @prev = @model.get('xrot')
+    @el.position.y = 10
+
