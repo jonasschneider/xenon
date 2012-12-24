@@ -132,11 +132,11 @@ module.exports = FlyControls = (object, domElement) ->
     @updateRotationVector()
 
   @update = (delta) ->
-    moveMult = delta * @movementSpeed
+    #moveMult = delta * @movementSpeed
     rotMult = delta * @rollSpeed
-    @object.translateX @moveVector.x * moveMult
-    @object.translateY @moveVector.y * moveMult
-    @object.translateZ @moveVector.z * moveMult
+    #@object.translateX @moveVector.x * moveMult
+    #@object.translateY @moveVector.y * moveMult
+    #@object.translateZ @moveVector.z * moveMult
     @tmpQuaternion.set(@rotationVector.x * rotMult, @rotationVector.y * rotMult, @rotationVector.z * rotMult, 1).normalize()
     @object.quaternion.multiplySelf @tmpQuaternion
     @object.matrix.setPosition @object.position

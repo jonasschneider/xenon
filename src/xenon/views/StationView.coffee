@@ -1,4 +1,5 @@
 Backbone = require 'backbone'
+BigAssLensFlare = require 'xenon/helpers/BigAssLensFlare'
 
 module.exports = class StationView extends Backbone.View
   el: true
@@ -6,15 +7,25 @@ module.exports = class StationView extends Backbone.View
   initialize: (options) ->
     @worldView = options.worldView
     # set up the sphere vars
-    radius = 50
+    radius = 70
     segments = 16
     rings = 16
     
-    sphereMaterial = new THREE.MeshLambertMaterial(color: 0xCC0000, wireframe: true)
+    sphereMaterial = new THREE.MeshLambertMaterial(color: 0x0000CC, wireframe: true)
     @el = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, rings), sphereMaterial)
     @worldView.scene.add @el
-    @prev = 0
+
+    @light = new THREE.PointLight(0xffffff, 1.5, 4500)
+    @model.bind 'change', =>
+      @model.applyInterpolatedPosition(@el, 0)
+      @model.applyInterpolatedPosition(@light, 0)
+    
+    @light.color.setHSV 0.55, 0.825, 0.99 # light color
+    @worldView.scene.add @light
+    @worldView.scene.add (new BigAssLensFlare(@light)).el
 
   render: (time) ->
-    @el.position.y = 10
-
+    # let's assume stations are stationary
+    #@model.applyInterpolatedPosition(@el, time)
+    @model.applyInterpolatedPosition(@el, 0)
+    @model.applyInterpolatedPosition(@light, 0)

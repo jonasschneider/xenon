@@ -18,7 +18,8 @@ module.exports = class extends GameCommon
       if e.inputState
         console.info "received client input for tick #{e.ticks} at server tick #{@ticks}"
         @playerInput["Player0"] = e.inputState
-        
+    
+    @loadMap() if @loadMap
 
   tellSelf: (what, args...) ->
     tell = to: '$self', what: what, with: args

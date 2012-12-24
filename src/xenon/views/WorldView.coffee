@@ -1,6 +1,7 @@
 Backbone = require 'backbone'
 ShipView = require './ShipView'
 RocketView = require './RocketView'
+StationView = require './StationView'
 BigAssLensFlare = require 'xenon/helpers/BigAssLensFlare'
 
 module.exports = class GameView extends Backbone.View
@@ -19,6 +20,10 @@ module.exports = class GameView extends Backbone.View
       when 'Rocket'
         rv = new RocketView model: e, worldView: this
         @subviews.push rv
+
+      when 'Station'
+        sv = new StationView model: e, worldView: this
+        @subviews.push sv
       else
         console.error "wtf is a #{e.entityTypeName}?", e
 
