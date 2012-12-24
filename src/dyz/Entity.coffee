@@ -11,6 +11,11 @@ module.exports = class Entity
 
     @attributeSpecs ||= {}
     @attributeSpecs.dead = false
+    @mixins ||= []
+    _(@mixins).each (mixin) =>
+      _.extend @attributeSpecs, mixin.attributeSpecs
+      _.extend this, mixin.methods
+      
 
   _initialize: ->
     @set @attributeSpecs
