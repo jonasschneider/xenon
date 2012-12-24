@@ -59,5 +59,5 @@ module.exports = class ScheduledGame
 
 _.extend(ScheduledGame.prototype, Backbone.Events)
 
-ScheduledGame.tickLength = 1000 / 10
+ScheduledGame.tickLength = 1000 / 20
 ScheduledGame.ticksPerSecond = 1000 / ScheduledGame.tickLength
