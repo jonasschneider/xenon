@@ -9,13 +9,15 @@ module.exports = class AppView extends Backbone.View
     
     @gameDisplay.bind 'ready', =>
       console.log("connecting..")
+      console.warn "faking latency"
+      fakeLag = 100
       socket = io.connect('http://'+location.hostname)
       
       socket.on 'update', (e) =>
-        console.warn "faking latency"
+        
         setTimeout =>
           @model.trigger 'update', e
-        , 100
+        , fakeLag
       
       socket.on 'log', (e) ->
         console.log e

@@ -12,3 +12,5 @@ module.exports = class Rocket extends Entity
     @set
       pos_x: (@get('pos_x') + 3)
       pos_z: (@get('pos_z') - 10)
+      health: (@get('health') - 1)
+      dead: (@get('health') == 0)
