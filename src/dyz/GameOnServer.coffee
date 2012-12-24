@@ -3,7 +3,7 @@ ScheduledGame          = require './helpers/ScheduledGame'
 
 module.exports = class extends ScheduledGame
   publishRun: true
-  
+
   constructor: ->
     super
     @tellQueue = []
@@ -11,8 +11,8 @@ module.exports = class extends ScheduledGame
     @bind 'update', (e) =>
       console.info "game got update ", JSON.stringify(e)
 
-      if e.tells
-        @tellQueue.push(tell) for tell in e.tells
+      if e.commands # for one-off commands
+        @tellQueue.push(to: '$self', what: cmd[0], with: cmd[1]) for cmd in e.commands
 
   tellSelf: (what, args...) ->
     tell = to: '$self', what: what, with: args
@@ -23,7 +23,7 @@ module.exports = class extends ScheduledGame
 
   runTell: (tell) ->
     console.log("running:", tell)
-    #if tell.to == '$self' # TODO: ONLY WORKS FOR TELLS TO GAME AT THIS TIME!
+    throw 'invalid target' if tell.to != '$self' # TODO
     this[tell.what].call(this, tell.with...)
 
   runTells: (tells) ->

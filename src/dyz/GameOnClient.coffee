@@ -21,21 +21,24 @@ module.exports = class GameOnClient extends ScheduledGame
     @clientLagTotal = 0
     @lastReceivedUpdateTicks = -1
     @lastAppliedUpdateTicks = 0
-    @dataReceivedSinceTick
+    @dataReceivedSinceTick = 0
 
-    @sendQueue = []
+    @commandQueue = []
   
-  sendClientTells: ->
-    if @sendQueue.length > 0
-      @trigger 'publish', tells: @sendQueue
-      @sendQueue = []
+  queueClientCommand: (cmd, args...) ->
+    @commandQueue.push [cmd, args]
+
+  sendClientInput: ->
+    if @commandQueue.length > 0
+      @trigger 'publish', commands: @commandQueue
+      @commandQueue = []
 
   # Returns a negative value if the client is lagging behind
   tickAction: ->
     console.info "=== CLIENT TICKING #{@ticks}"
     startTime = new Date().getTime()
 
-    @sendClientTells()
+    @sendClientInput()
 
     if @dirtyWorldResetSnapshot
       @world.applyAttributeSnapshot(@dirtyWorldResetSnapshot)

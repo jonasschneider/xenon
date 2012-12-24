@@ -18,8 +18,7 @@ module.exports = class GameView extends Backbone.View
     @container = $('#nanowar')
 
     $("#move-btn").click =>
-      @model.tellSelf 'moveStuff'
-      @model.sendClientTells()
+      @model.queueClientCommand 'moveStuff'
 
     ng = new GameNetGraphView model: @model, gameView: this
     @container.append ng.render().el
