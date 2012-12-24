@@ -151,3 +151,5 @@ TODO:
   - try out how drawing fleets in a canvas affects performance
   - add entity messages -> and then get EnhancerNode affectedCells:add etc. up to date
   - use protocol buffers for sending the updates
+
+  https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking
