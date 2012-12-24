@@ -1,7 +1,7 @@
 _                 = require 'underscore'
-ScheduledGame          = require './helpers/ScheduledGame'
+GameCommon          = require './helpers/GameCommon'
 
-module.exports = class GameOnClient extends ScheduledGame
+module.exports = class GameOnClient extends GameCommon
   constructor: ->
     super
 

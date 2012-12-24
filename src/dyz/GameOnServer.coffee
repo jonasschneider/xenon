@@ -1,7 +1,7 @@
 _                 = require 'underscore'
-ScheduledGame          = require './helpers/ScheduledGame'
+GameCommon          = require './helpers/GameCommon'
 
-module.exports = class extends ScheduledGame
+module.exports = class extends GameCommon
   publishRun: true
 
   constructor: ->
@@ -43,7 +43,7 @@ module.exports = class extends ScheduledGame
         ent.update && ent.update()
         @world.remove(ent) if ent.get('dead')
 
-    expectedPassedTicks = (new Date().getTime() - @tickZeroTime) / 1000 * ScheduledGame.ticksPerSecond
+    expectedPassedTicks = (new Date().getTime() - @tickZeroTime) / 1000 * GameCommon.ticksPerSecond
     syncError = (@ticks - expectedPassedTicks).toFixed(1)
 
     endTime = new Date().getTime()

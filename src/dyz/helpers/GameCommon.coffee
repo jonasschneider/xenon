@@ -2,7 +2,7 @@ World  = require('dyz/World')
 Backbone          = require 'backbone'
 _                 = require 'underscore'
 
-module.exports = class ScheduledGame
+module.exports = class GameCommon
   entityTypes: {}
 
   constructor: ->
@@ -18,18 +18,18 @@ module.exports = class ScheduledGame
     @ticks++
     @world.ticks = @ticks
     @world.tickStartedAt = new Date().getTime()
-    @world.tickLength = ScheduledGame.tickLength
+    @world.tickLength = GameCommon.tickLength
 
     # Pass the return value on
     @tickAction()
 
   ticksToTime: (ticks) ->
-    ticks * ScheduledGame.tickLength
+    ticks * GameCommon.tickLength
 
   run: ->
     console.log "GOGOGOG"
     @trigger 'run'
-    @tickZeroTime = new Date().getTime() - (@ticks * ScheduledGame.tickLength)
+    @tickZeroTime = new Date().getTime() - (@ticks * GameCommon.tickLength)
     if @publishRun
       setTimeout =>
         @trigger 'publish', run: true
@@ -42,7 +42,7 @@ module.exports = class ScheduledGame
     val = @tick()
     
     if @running
-      realtimeForNextTick = @tickZeroTime + (@ticks * ScheduledGame.tickLength)
+      realtimeForNextTick = @tickZeroTime + (@ticks * GameCommon.tickLength)
       timeout = realtimeForNextTick - new Date().getTime()
 
       if val < 0 # see tickClient()
@@ -57,7 +57,7 @@ module.exports = class ScheduledGame
         @scheduleTick()
       , timeout
 
-_.extend(ScheduledGame.prototype, Backbone.Events)
+_.extend(GameCommon.prototype, Backbone.Events)
 
-ScheduledGame.tickLength = 1000 / 20
-ScheduledGame.ticksPerSecond = 1000 / ScheduledGame.tickLength
+GameCommon.tickLength = 1000 / 20
+GameCommon.ticksPerSecond = 1000 / GameCommon.tickLength
