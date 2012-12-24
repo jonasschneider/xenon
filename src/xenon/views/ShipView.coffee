@@ -12,11 +12,13 @@ module.exports = class ShipView extends Backbone.View
     
     sphereMaterial = new THREE.MeshLambertMaterial(color: 0xCC0000, wireframe: true)
     @el = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, rings), sphereMaterial)
-    @prev = 0
+    @el.position.x = 0
+    @el.position.y = 0
+    @el.position.z = 0
     @worldView.scene.add @el
 
   render: (time) ->
-    @el.rotation.x = @model.interpolate 'xrot', time
-    @el.position.x = @model.interpolate 'x', time
+    @model.applyInterpolatedPosition(@el, time)
 
-    @prev = @model.interpolate 'x', time
+    @el.rotation.x = @model.interpolate 'rotation_x', time
+    

@@ -16,5 +16,4 @@ module.exports = class RocketView extends Backbone.View
     @prev = 0
 
   render: (time) ->
-    @el.position.x = @model.interpolate 'pos_x', time
-    @el.position.z = @model.interpolate 'pos_z', time
+    @model.applyInterpolatedPosition(@el, time)
