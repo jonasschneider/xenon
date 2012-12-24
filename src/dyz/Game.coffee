@@ -4,14 +4,16 @@ _                 = require 'underscore'
 Backbone          = require 'backbone'
 
 module.exports = class Game extends Backbone.Model
+  entityTypes:
+    Ship: Ship
+  
   initialize: ->
-    etypes = Ship: Ship
-    @world = new World etypes
+    @world = new World @entityTypes
 
     @serverUpdates = {}
 
     @bind 'update', (e) =>
-      console.log "game got update ", JSON.stringify(e)
+      console.info "game got update ", JSON.stringify(e)
 
       if e.tells
         @tellQueue.push(tell) for tell in e.tells
@@ -23,13 +25,13 @@ module.exports = class Game extends Backbone.Model
 
       @run() if e.run
     
-    @ticks = 1
+    @ticks = 0
 
     # client vars
     @clientLag = 0
     @clientLagTotal = 0
     @lastReceivedUpdateTicks = -1
-    @lastAppliedUpdateTicks = -1
+    @lastAppliedUpdateTicks = 0
     @dataReceivedSinceTick
 
     # common vars
@@ -71,7 +73,7 @@ module.exports = class Game extends Backbone.Model
   
   # Returns a negative value if the client is lagging behind
   tickClient: ->
-    console.log "=== CLIENT TICKING #{@ticks}"
+    console.info "=== CLIENT TICKING #{@ticks}"
     startTime = new Date().getTime()
 
     @sendClientTells()
@@ -86,8 +88,12 @@ module.exports = class Game extends Backbone.Model
       next = ++@lastAppliedUpdateTicks
 
       lastAppliedUpdate = @serverUpdates[next]
-      console.log 'applying mutation', next, lastAppliedUpdate
-      @world.applyMutation(lastAppliedUpdate.entityMutation)
+      if lastAppliedUpdate
+        @world.applyMutation(lastAppliedUpdate.entityMutation)
+      else
+        console.error 'tried to apply mutation, but did not have dataz'
+        console.error lastAppliedUpdate, next, @serverUpdates
+        throw 'wtf'
 
       if next-2 > 0
         delete @serverUpdates[next-2] # keep the mutation that led to the recent tick and the one before that
@@ -125,7 +131,7 @@ module.exports = class Game extends Backbone.Model
     reachableTicks - @ticks
   
   tickServer: ->
-    console.log "=== SERVER TICKING #{@ticks}"
+    console.info "=== SERVER TICKING #{@ticks}"
     startTime = new Date().getTime()
 
     entityMutation = @world.mutate =>
@@ -145,7 +151,7 @@ module.exports = class Game extends Backbone.Model
       serverProcessingTime: (endTime-startTime)
       syncError: syncError
 
-    console.log "=== SERVER TICKED TO #{@ticks}"
+    console.info "=== SERVER TICKED TO #{@ticks}"
 
   tick: ->
     @ticks++
@@ -178,8 +184,7 @@ module.exports = class Game extends Backbone.Model
   
   scheduleTick: ->
     val = @tick()
-    console.log "tick retval:", val
-
+    
     if @running
       realtimeForNextTick = @tickZeroTime + (@ticks * Game.tickLength)
       timeout = realtimeForNextTick - new Date().getTime()

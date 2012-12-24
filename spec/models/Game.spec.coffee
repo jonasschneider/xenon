@@ -1,6 +1,14 @@
-Game = require('dyz/Game')
-Player = require('nanowar/entities/Player')
-Player = require('nanowar/entities/Cell')
+RootGame = require('dyz/Game')
+Entity = require('dyz/Entity')
+
+class Player extends Entity
+  attributeSpecs:
+    age: 0
+    name: 'Hugo'
+
+class Game extends RootGame
+  entityTypes:
+    Player: Player
 
 describe 'Game', ->
   describe '#tellSelf', ->
@@ -67,62 +75,37 @@ describe 'Game', ->
       p = game.world.spawn 'Player'
 
       game.ahoy = ->
-        p.set color: 'yell'
+        p.set name: 'Jack'
 
       game.tellSelf 'ahoy'
       game.tick()
 
       expect(output.tick).toBe 1
-      expect(JSON.stringify(output.entityMutation)).toBe '[["changed","Player_1$color","yell"]]'
-
-  describe '#getWinner', ->
-    it 'returns null when there are multiple players remaining', ->
-      game = new Game
-      p1 = game.world.spawn 'Player'
-      p2 = game.world.spawn 'Player'
-      c1 = game.world.spawn 'Cell'
-      c1.setRelation 'owner', p1
-      
-      c2 = game.world.spawn 'Cell'
-      c2.setRelation 'owner', p2
-
-      expect(game.getWinner()).toBe null
-
-    it 'returns the winner when there is only one player remaining', ->
-      game = new Game
-      p1 = game.world.spawn 'Player'
-      p2 = game.world.spawn 'Player'
-      c1 = game.world.spawn 'Cell'
-      c1.setRelation 'owner', p2
-      
-      c2 = game.world.spawn 'Cell'
-      c2.setRelation 'owner', p2
-
-      expect(game.getWinner()).toBe p2
+      expect(JSON.stringify(output.entityMutation)).toBe '[["changed","Player_1$name","Jack"]]'
 
   describe 'lagging', ->
     it 'extrapolates', ->
       server = new Game onServer: true
       client = new Game onServer: false
 
-      cell = null
+      player = null
 
       server.bind 'publish', (what) ->
         client.trigger 'update', what
         console.log what
 
       server.spawnIt = ->
-        cell = server.world.spawn 'Cell', x: 0
+        player = server.world.spawn 'Player', age: 0
 
       server.moveIt = ->
-        curX = cell.get('x')
-        cell.set x: curX+10
+        curX = player.get('age')
+        player.set age: curX+10
 
       server.moveItSlow = ->
-        curX = cell.get('x')
-        cell.set x: curX+5
+        curX = player.get('age')
+        player.set age: curX+5
 
-      # first, spawn the cell
+      # first, spawn the player
       server.tellSelf 'spawnIt'
       server.tick() # 1
       client.tick() # 1
@@ -142,16 +125,16 @@ describe 'Game', ->
       client.tick() # 3
 
       expect(client.lastAppliedUpdateTicks).toBe 3
-      expect(client.world.get(cell.id).get('x')).toBe 20
+      expect(client.world.get(player.id).get('age')).toBe 20
 
       # now we lag.
       client.tick() # 4
       expect(client.lastAppliedUpdateTicks).toBe 3
-      expect(client.world.get(cell.id).get('x')).toBe 30
+      expect(client.world.get(player.id).get('age')).toBe 30
 
       # lag again
       client.tick() # 5
-      expect(client.world.get(cell.id).get('x')).toBe 40
+      expect(client.world.get(player.id).get('age')).toBe 40
 
       expect(client.lastAppliedUpdateTicks).toBe 3
 
@@ -161,7 +144,7 @@ describe 'Game', ->
       client.tick() # 6
 
       # correct result now: 25 (known server value at tick 4) + 2 (tick diff) * 5 (last known delta) = 35
-      expect(client.world.get(cell.id).get('x')).toBe 35
+      expect(client.world.get(player.id).get('age')).toBe 35
 
       # now the 2 late updates arrive
       server.tellSelf 'moveItSlow'
@@ -174,31 +157,31 @@ describe 'Game', ->
 
       client.tick()
 
-      expect(client.world.get(cell.id).get('x')).toBe cell.get('x')
+      expect(client.world.get(player.id).get('age')).toBe player.get('age')
 
 
     it 'resets attributes back to the server value when the lag ends', ->
       server = new Game onServer: true
       client = new Game onServer: false
 
-      cell = null
+      player = null
 
       server.bind 'publish', (what) ->
         client.trigger 'update', what
         console.log what
 
       server.spawnIt = ->
-        cell = server.world.spawn 'Cell', x: 0
+        player = server.world.spawn 'Player', age: 0
 
       server.moveIt = ->
-        curX = cell.get('x')
-        cell.set x: curX+10
+        curX = player.get('age')
+        player.set age: curX+10
 
       server.moveItSlow = ->
-        curX = cell.get('x')
-        cell.set x: curX+5
+        curX = player.get('age')
+        player.set age: curX+5
 
-      # first, spawn the cell
+      # first, spawn the player
       server.tellSelf 'spawnIt'
       server.tick() # 1
       client.tick() # 1
@@ -218,17 +201,17 @@ describe 'Game', ->
       client.tick() # 3
 
       expect(client.lastAppliedUpdateTicks).toBe 3
-      expect(client.world.get(cell.id).get('x')).toBe 20
+      expect(client.world.get(player.id).get('age')).toBe 20
 
       # now we lag.
       client.tick() # 4
       expect(client.lastAppliedUpdateTicks).toBe 3
-      expect(client.world.get(cell.id).get('x')).toBe 30
+      expect(client.world.get(player.id).get('age')).toBe 30
 
       # we recover from the lag
       server.tick() # 4
       server.tick() # 5
       client.tick() # 5
 
-      expect(client.world.get(cell.id).get('x')).toBe cell.get('x')
+      expect(client.world.get(player.id).get('age')).toBe player.get('age')
 

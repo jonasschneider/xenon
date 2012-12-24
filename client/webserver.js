@@ -44,12 +44,14 @@ app.get('/specs.html', function(req, res) {
     exec = require('child_process').exec,
     child;
 
-  child = exec('find spec/ -type f |grep .spec.coffee',
-    function (error, stdout, stderr) {
-      console.log('stdout: ' + stdout);
-      console.log('stderr: ' + stderr);
-      specs = stdout.split("\n")
-      res.send(haml(fs.readFileSync('client/views/specs.haml', 'utf8'), {specs: specs})())
+  exec('find spec/ -type f |grep .spec.coffee',
+    function (error, specstdout, stderr) {
+      exec('find src/ -type f |grep .coffee',
+        function (error, srcstdout, stderr) {
+          specs = specstdout.split("\n")
+          srcfiles = srcstdout.split("\n")
+          res.send(haml(fs.readFileSync('client/views/specs.haml', 'utf8'), {specs: specs, srcfiles: srcfiles})())
+      });
   });
   
 });

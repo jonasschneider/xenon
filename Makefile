@@ -1,6 +1,6 @@
 go: test serve
 test:
-	cd src; ../node_modules/jasmine-node/bin/jasmine-node --coffee ../spec
+	cd src && NODE_PATH=. ../node_modules/jasmine-node/bin/jasmine-node --coffee ../spec
 
 serve: build
 	# directly run it like this so we don't get the RequireJS-wrapped version
