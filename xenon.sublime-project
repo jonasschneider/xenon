@@ -1,0 +1,9 @@
+{
+	"folders":
+	[
+		{
+			"path": "/Users/jonas/code/xenon",
+      "folder_exclude_patterns": ["compiled", "node_modules"]
+		}
+	]
+}
