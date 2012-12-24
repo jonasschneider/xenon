@@ -4,9 +4,9 @@ _       = require 'underscore'
 Backbone= require 'backbone'
 
 class NetworkedPlayer
-  constructor: (socket, ship) ->
+  constructor: (socket, name) ->
     @socket = socket
-    @ship = ship
+    @name = name
     
     @socket.emit 'log', 'You are: ' + @toString()
     
@@ -38,7 +38,6 @@ class Match
     @game = new Game onServer: true
     @app = new App game: @game
     
-
     @app.bind 'publish', @distributeUpdate, this
     
     @game.world.enableStrictMode()
@@ -49,9 +48,8 @@ class Match
   
   addPlayer: (clientSocket) ->
     console.log clientSocket.id + " connected"
-    @game.tellSelf('addShip', name: ("Player " + (@players.length + 1)))
-    console.log "made player ship"
-    player = new NetworkedPlayer clientSocket, null
+    player = new NetworkedPlayer clientSocket, ("Player " + (@players.length + 1))
+    @game.addPlayer player
     @players.push player
     
     player.bind 'update', (e) =>

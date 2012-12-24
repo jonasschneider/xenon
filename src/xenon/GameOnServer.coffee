@@ -5,6 +5,9 @@ consts = require './index'
 module.exports = class GameOnServer extends DyzGameOnServer
   entityTypes: consts.entityTypes
 
+  addPlayer: (player) ->
+    @tellSelf('addShip', name: player.name)
+
   addShip: (attributes) ->
     @world.spawn 'Ship', attributes
   
