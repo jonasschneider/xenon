@@ -1,7 +1,7 @@
 Backbone = require 'backbone'
 GameNetGraphView = require 'dyz/views/GameNetGraphView'
 
-FlyControls = require 'xenon/helpers/FlyControls'
+ShipFlyControls = require 'xenon/helpers/ShipFlyControls'
 WorldView = require './WorldView'
 _                 = require 'underscore'
 
@@ -36,7 +36,7 @@ module.exports = class GameView extends Backbone.View
 
     @clock = new THREE.Clock()
 
-    @controls = new FlyControls @worldv.camera
+    @controls = new ShipFlyControls @worldv.camera
     #@controls = new FlyControls(new THREE.PerspectiveCamera(40, 1, 1, 1))
     @controls.movementSpeed = 2500
     @controls.rollSpeed = Math.PI / 6

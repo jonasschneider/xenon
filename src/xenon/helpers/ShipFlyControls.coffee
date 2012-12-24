@@ -1,37 +1,45 @@
-module.exports = FlyControls = (object, domElement) ->
-  bind = (scope, fn) ->
-    ->
-      fn.apply scope, arguments
-  @object = object
-  @domElement = (if (domElement isnt `undefined`) then domElement else document)
-  @domElement.setAttribute "tabindex", -1  if domElement
-  @movementSpeed = 1.0
-  @rollSpeed = 0.005
-  @dragToLook = false
-  @autoForward = false
-  @object.useQuaternion = true
-  @tmpQuaternion = new THREE.Quaternion()
-  @mouseStatus = 0
-  @moveState =
-    up: 0
-    down: 0
-    left: 0
-    right: 0
-    forward: 0
-    back: 0
-    pitchUp: 0
-    pitchDown: 0
-    yawLeft: 0
-    yawRight: 0
-    rollLeft: 0
-    rollRight: 0
+_ = require('underscore')
 
-  @moveVector = new THREE.Vector3(0, 0, 0)
-  @rotationVector = new THREE.Vector3(0, 0, 0)
-  @handleEvent = (event) ->
-    this[event.type] event  if typeof this[event.type] is "function"
+module.exports = class ShipFlyControls
+  constructor: (target) ->
+    @target = target
+    
+    @movementSpeed = 1.0
+    @rollSpeed = 0.005
+    @dragToLook = false
+    @autoForward = false
+    @target.useQuaternion = true
+    @tmpQuaternion = new THREE.Quaternion()
+    @mouseStatus = 0
+    @moveState =
+      up: 0
+      down: 0
+      left: 0
+      right: 0
+      forward: 0
+      back: 0
+      pitchUp: 0
+      pitchDown: 0
+      yawLeft: 0
+      yawRight: 0
+      rollLeft: 0
+      rollRight: 0
 
-  @keydown = (event) =>
+    @moveVector = new THREE.Vector3(0, 0, 0)
+    @rotationVector = new THREE.Vector3(0, 0, 0)
+    @handleEvent = (event) ->
+      this[event.type] event  if typeof this[event.type] is "function"
+
+    console.warn("binding ShipFlyControls to #{@target} with ship #{@ship}")
+    document.addEventListener "mousemove", _(@mousemove).bind(this), false
+    document.addEventListener "mousedown", _(@mousedown).bind(this), false
+    document.addEventListener "mouseup", _(@mouseup).bind(this), false
+    document.addEventListener "keydown", _(@keydown).bind(this), false
+    document.addEventListener "keyup", _(@keyup).bind(this), false
+    @updateMovementVector()
+    @updateRotationVector()
+  
+  keydown: (event) ->
     return  if event.altKey
     switch event.keyCode
       when 16
@@ -63,7 +71,7 @@ module.exports = FlyControls = (object, domElement) ->
     @updateMovementVector()
     @updateRotationVector()
 
-  @keyup = (event) =>
+  keyup: (event) ->
     switch event.keyCode
       when 16
         @movementSpeedMultiplier = 1
@@ -94,9 +102,7 @@ module.exports = FlyControls = (object, domElement) ->
     @updateMovementVector()
     @updateRotationVector()
 
-  @mousedown = (event) =>
-    console.info "mousedown"
-    @domElement.focus()  if @domElement isnt document
+  mousedown: (event) ->
     event.preventDefault()
     event.stopPropagation()
     if @dragToLook
@@ -104,11 +110,11 @@ module.exports = FlyControls = (object, domElement) ->
     else
       switch event.button
         when 0
-          @object.moveForward = true
+          @target.moveForward = true
         when 2
-          @object.moveBackward = true
+          @target.moveBackward = true
 
-  @mousemove = (event) =>
+  mousemove: (event) ->
     if not @dragToLook or @mouseStatus > 0
       container = @getContainerDimensions()
       halfWidth = container.size[0] / 2
@@ -117,7 +123,7 @@ module.exports = FlyControls = (object, domElement) ->
       @moveState.pitchDown = ((event.pageY - container.offset[1]) - halfHeight) / halfHeight
       @updateRotationVector()
 
-  @mouseup = (event) =>
+  mouseup: (event) ->
     event.preventDefault()
     event.stopPropagation()
     if @dragToLook
@@ -131,42 +137,30 @@ module.exports = FlyControls = (object, domElement) ->
           @moveBackward = false
     @updateRotationVector()
 
-  @update = (delta) ->
+  update: (delta) ->
     #moveMult = delta * @movementSpeed
     rotMult = delta * @rollSpeed
-    #@object.translateX @moveVector.x * moveMult
-    #@object.translateY @moveVector.y * moveMult
-    #@object.translateZ @moveVector.z * moveMult
+    #@target.translateX @moveVector.x * moveMult
+    #@target.translateY @moveVector.y * moveMult
+    #@target.translateZ @moveVector.z * moveMult
     @tmpQuaternion.set(@rotationVector.x * rotMult, @rotationVector.y * rotMult, @rotationVector.z * rotMult, 1).normalize()
-    @object.quaternion.multiplySelf @tmpQuaternion
-    @object.matrix.setPosition @object.position
-    @object.matrix.setRotationFromQuaternion @object.quaternion
-    @object.matrixWorldNeedsUpdate = true
+    @target.quaternion.multiplySelf @tmpQuaternion
+    @target.matrix.setPosition @target.position
+    @target.matrix.setRotationFromQuaternion @target.quaternion
+    @target.matrixWorldNeedsUpdate = true
 
-  @updateMovementVector = ->
+  updateMovementVector: ->
     forward = (if (@moveState.forward or (@autoForward and not @moveState.back)) then 1 else 0)
     @moveVector.x = (-@moveState.left + @moveState.right)
     @moveVector.y = (-@moveState.down + @moveState.up)
     @moveVector.z = (-forward + @moveState.back)
 
-  @updateRotationVector = ->
+  updateRotationVector: ->
     @rotationVector.x = (-@moveState.pitchDown + @moveState.pitchUp)
     @rotationVector.y = (-@moveState.yawRight + @moveState.yawLeft)
     @rotationVector.z = (-@moveState.rollRight + @moveState.rollLeft)
 
-  @getContainerDimensions = ->
-    unless @domElement is document
-      size: [@domElement.offsetWidth, @domElement.offsetHeight]
-      offset: [@domElement.offsetLeft, @domElement.offsetTop]
-    else
-      size: [window.innerWidth, window.innerHeight]
-      offset: [0, 0]
+  getContainerDimensions: ->
+    size: [window.innerWidth, window.innerHeight]
+    offset: [0, 0]
   
-  console.warn("binding FlyControls to #{@domElement}")
-  @domElement.addEventListener "mousemove",  @mousemove, false
-  @domElement.addEventListener "mousedown", @mousedown, false
-  @domElement.addEventListener "mouseup", @mouseup, false
-  @domElement.addEventListener "keydown", @keydown, false
-  @domElement.addEventListener "keyup", @keyup, false
-  @updateMovementVector()
-  @updateRotationVector()
