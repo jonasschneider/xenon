@@ -7,16 +7,27 @@ module.exports = class Ship extends Entity
     y:      0
     size:   0
 
+    vx: 0
+
     xrot: 0.0
 
     health: 100
 
   update: (playerInput) ->
-    newx =  @get('x')
+    vx = @get('vx')
+    ax = 5
+    
     if playerInput["Player0"] && playerInput["Player0"]["move"]["forward"] == 1
-      newx += 100
-    if playerInput["Player0"] && playerInput["Player0"]["move"]["back"] == 1
-      newx -= 100
+      vx += ax if @get('vx') < 100
+    else
+      vx -= ax if @get('vx') > 0
+
+    if playerInput["Player0"] && playerInput["Player0"]["move"]["back"] == 1 
+      vx -= ax if @get('vx') > -100
+    else
+      vx += ax if @get('vx') < 0
+
     @set
       xrot: @get('xrot') + 0.05
-      x: newx
+      x: @get('x') + vx
+      vx: vx
