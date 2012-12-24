@@ -37,9 +37,6 @@ module.exports = class Game extends Backbone.Model
     @tellQueue = []
     @sendQueue = []
   
-  addShip: (attributes) ->
-    @world.spawn 'Ship', attributes
-  
   tellSelf: (what, args...) ->
     tell = to: '$self', what: what, with: args
     if @get('onServer')
@@ -47,27 +44,14 @@ module.exports = class Game extends Backbone.Model
     else
       @sendQueue.push tell
 
-  # private?
+  addPlayer: (player) ->
+    console.warn "new player", player
+
 
   runTell: (tell) ->
     console.log("running:", tell)
     #if tell.to == '$self' # TODO: ONLY WORKS FOR TELLS TO GAME AT THIS TIME!
     this[tell.what].call(this, tell.with...)
-
-  sendFleet: (from, to) ->
-    fleet = @world.spawn 'Fleet'
-    fleet.setRelation('from', from)
-    fleet.setRelation('to', to)
-    
-    if fleet.launch()
-      console.log "launched a fleet"
-    else
-      console.log "fleet failed to launch"
-      fleet.set dead: true
-
-  moveCell: ->
-    c = @world.getEntitiesOfType('Cell')[0]
-    c.set x: c.get('x')+50
 
   runTells: (tells) ->
     @runTell(tell) for tell in tells
@@ -85,8 +69,9 @@ module.exports = class Game extends Backbone.Model
     console.log 'HALTING'
     @running = false
   
+  # Returns a negative value if the client is lagging behind
   tickClient: ->
-    #console.log "=== CLIENT TICKING #{@ticks}"
+    console.log "=== CLIENT TICKING #{@ticks}"
     startTime = new Date().getTime()
 
     @sendClientTells()
@@ -137,7 +122,7 @@ module.exports = class Game extends Backbone.Model
       serverProcessingTime: (lastAppliedUpdate || {serverProcessingTime: 0}).serverProcessingTime
     @dataReceivedSinceTick = 0
 
-    #console.log "=== CLIENT TICK DONE"
+    reachableTicks - @ticks
   
   tickServer: ->
     console.log "=== SERVER TICKING #{@ticks}"
@@ -168,6 +153,7 @@ module.exports = class Game extends Backbone.Model
     @world.tickStartedAt = new Date().getTime()
     @world.tickLength = Game.tickLength
 
+    # Pass the return value on
     if @get('onServer')
       @tickServer()
     else
@@ -191,11 +177,16 @@ module.exports = class Game extends Backbone.Model
     @scheduleTick()
   
   scheduleTick: ->
-    @tick()
+    val = @tick()
+    console.log "tick retval:", val
 
     if @running
       realtimeForNextTick = @tickZeroTime + (@ticks * Game.tickLength)
       timeout = realtimeForNextTick - new Date().getTime()
+
+      if val < 0 # see tickClient()
+        console.log "skewing clock to get rid of lag"
+        timeout += 10
 
       if timeout < 0
         console.warn "WARNING: desynched, scheduling next tick immediately"
@@ -206,5 +197,5 @@ module.exports = class Game extends Backbone.Model
       , timeout
 
 
-Game.tickLength = 1000 / 5
+Game.tickLength = 1000 / 10
 Game.ticksPerSecond = 1000 / Game.tickLength

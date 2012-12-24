@@ -4,8 +4,8 @@ Backbone = require('backbone')
 module.exports = class Peer extends Backbone.Model
   urlRoot: '/app'
   
-  initialize: ->
-    @game = new Game onServer: @get('onServer')
+  initialize: (options) ->
+    @game = options.game
     
     @game.bind 'publish', (e) =>
       @trigger 'publish',

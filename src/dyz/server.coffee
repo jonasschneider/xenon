@@ -32,20 +32,14 @@ class NetworkedPlayer
 _.extend(NetworkedPlayer.prototype, Backbone.Events)
 
 class Match
-  constructor: ->
+  constructor: (Game) ->
     @players = []
     
-    @app = new App onServer: true
-    @game = @app.game
+    @game = new Game onServer: true
+    @app = new App game: @game
+    
 
     @app.bind 'publish', @distributeUpdate, this
-
-    @sendToAll 'log', 'starting soon!'
-    
-    
-    console.log 'starting. players:'
-    _(@players).each (player) =>
-      console.log "- #{player} (socket id #{player.socket.id})"
     
     @game.world.enableStrictMode()
 
@@ -82,8 +76,8 @@ class Match
     
 
 module.exports = {
-  start: (io) ->
-    match = new Match
+  start: (io, Game) ->
+    match = new Match(Game)
     io.sockets.on 'connection', (clientSocket) ->
       console.log 'connection'
       match.addPlayer clientSocket

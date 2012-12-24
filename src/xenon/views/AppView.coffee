@@ -1,5 +1,6 @@
 Backbone = require 'backbone'
 GameView = require './GameView'
+Game = require 'xenon/Game'
 io       = require 'socket.io'
 
 module.exports = class AppView extends Backbone.View
@@ -24,7 +25,11 @@ module.exports = class AppView extends Backbone.View
         @model.game.world.applyFullSnapshot(snapshot)
         @model.game.lastAppliedUpdateTicks = ticks
         @model.game.ticks = ticks
-        @model.game.run()
+        
+        # delay for one tick in order to, well, compensate for the server being faster?
+        setTimeout =>
+          @model.game.run()
+        , Game.tickLength
       
       socket.on 'setLocalPlayerId',  (player) =>
         @localPlayerId = player

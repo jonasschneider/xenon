@@ -25,8 +25,7 @@ requirejs.config
   baseUrl: 'compiled'
   nodeRequire: require
 
-requirejs(['dyz/server'], (server) ->
-  server.start(io)
-#
+requirejs(['dyz/server', 'xenon/Game'], (server, Game) ->
+  server.start(io, Game)
   console.log("Server running at port " + port)
 )
