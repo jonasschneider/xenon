@@ -95,6 +95,7 @@ module.exports = FlyControls = (object, domElement) ->
     @updateRotationVector()
 
   @mousedown = (event) ->
+    console.info "mousedown"
     @domElement.focus()  if @domElement isnt document
     event.preventDefault()
     event.stopPropagation()
@@ -109,6 +110,7 @@ module.exports = FlyControls = (object, domElement) ->
 
   @mousemove = (event) ->
     if not @dragToLook or @mouseStatus > 0
+      console.log("updating")
       container = @getContainerDimensions()
       halfWidth = container.size[0] / 2
       halfHeight = container.size[1] / 2
@@ -160,7 +162,7 @@ module.exports = FlyControls = (object, domElement) ->
     else
       size: [window.innerWidth, window.innerHeight]
       offset: [0, 0]
-
+  console.warn("binding FlyControls to #{@domElement}")
   @domElement.addEventListener "mousemove", bind(this, @mousemove), false
   @domElement.addEventListener "mousedown", bind(this, @mousedown), false
   @domElement.addEventListener "mouseup", bind(this, @mouseup), false

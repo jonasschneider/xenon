@@ -4,6 +4,7 @@ _                 = require 'underscore'
 
 module.exports = class GameCommon
   entityTypes: {}
+  log: ->
 
   constructor: ->
     @ticks = 0
@@ -46,7 +47,7 @@ module.exports = class GameCommon
       timeout = realtimeForNextTick - new Date().getTime()
 
       if val < 0 # see tickClient()
-        console.log "skewing clock to get rid of lag"
+        @log "skewing clock to get rid of lag"
         timeout += 10
 
       if timeout < 0

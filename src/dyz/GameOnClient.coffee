@@ -8,7 +8,7 @@ module.exports = class GameOnClient extends GameCommon
     @serverUpdates = {}
 
     @bind 'update', (e) =>
-      console.info "client got update ", JSON.stringify(e)
+      @log "client got update ", JSON.stringify(e)
 
       if e.entityMutation
         @dataReceivedSinceTick += JSON.stringify(e).length
@@ -35,7 +35,7 @@ module.exports = class GameOnClient extends GameCommon
 
   # Returns a negative value if the client is lagging behind
   tickAction: ->
-    console.info "=== CLIENT TICKING #{@ticks}"
+    @log "=== CLIENT TICKING #{@ticks}"
     startTime = new Date().getTime()
 
     @sendClientInput()
@@ -64,7 +64,7 @@ module.exports = class GameOnClient extends GameCommon
     if reachableTicks < @ticks && reachableTicks > -1 # allow catching up
       ticksToExtrapolate = @ticks - reachableTicks
       startingPoint = reachableTicks
-      console.log "client is lagging behind, going to extrapolate for #{ticksToExtrapolate} ticks from tick #{startingPoint}"
+      @log "client is lagging behind, going to extrapolate for #{ticksToExtrapolate} ticks from tick #{startingPoint}"
 
       if ticksToExtrapolate > 10 # todo: constant
         console.log "lost more than 10 ticks, connection lost :("
