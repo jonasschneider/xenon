@@ -31,7 +31,7 @@ module.exports = FlyControls = (object, domElement) ->
   @handleEvent = (event) ->
     this[event.type] event  if typeof this[event.type] is "function"
 
-  @keydown = (event) ->
+  @keydown = (event) =>
     return  if event.altKey
     switch event.keyCode
       when 16
@@ -63,7 +63,7 @@ module.exports = FlyControls = (object, domElement) ->
     @updateMovementVector()
     @updateRotationVector()
 
-  @keyup = (event) ->
+  @keyup = (event) =>
     switch event.keyCode
       when 16
         @movementSpeedMultiplier = 1
@@ -94,7 +94,7 @@ module.exports = FlyControls = (object, domElement) ->
     @updateMovementVector()
     @updateRotationVector()
 
-  @mousedown = (event) ->
+  @mousedown = (event) =>
     console.info "mousedown"
     @domElement.focus()  if @domElement isnt document
     event.preventDefault()
@@ -108,9 +108,8 @@ module.exports = FlyControls = (object, domElement) ->
         when 2
           @object.moveBackward = true
 
-  @mousemove = (event) ->
+  @mousemove = (event) =>
     if not @dragToLook or @mouseStatus > 0
-      console.log("updating")
       container = @getContainerDimensions()
       halfWidth = container.size[0] / 2
       halfHeight = container.size[1] / 2
@@ -118,7 +117,7 @@ module.exports = FlyControls = (object, domElement) ->
       @moveState.pitchDown = ((event.pageY - container.offset[1]) - halfHeight) / halfHeight
       @updateRotationVector()
 
-  @mouseup = (event) ->
+  @mouseup = (event) =>
     event.preventDefault()
     event.stopPropagation()
     if @dragToLook
@@ -162,11 +161,12 @@ module.exports = FlyControls = (object, domElement) ->
     else
       size: [window.innerWidth, window.innerHeight]
       offset: [0, 0]
+  
   console.warn("binding FlyControls to #{@domElement}")
-  @domElement.addEventListener "mousemove", bind(this, @mousemove), false
-  @domElement.addEventListener "mousedown", bind(this, @mousedown), false
-  @domElement.addEventListener "mouseup", bind(this, @mouseup), false
-  @domElement.addEventListener "keydown", bind(this, @keydown), false
-  @domElement.addEventListener "keyup", bind(this, @keyup), false
+  @domElement.addEventListener "mousemove",  @mousemove, false
+  @domElement.addEventListener "mousedown", @mousedown, false
+  @domElement.addEventListener "mouseup", @mouseup, false
+  @domElement.addEventListener "keydown", @keydown, false
+  @domElement.addEventListener "keyup", @keyup, false
   @updateMovementVector()
   @updateRotationVector()

@@ -34,11 +34,13 @@ module.exports = class GameView extends Backbone.View
 
     requestAnimFrame _(@render).bind(this)
 
-    controls = new FlyControls @worldv.camera, @container[0]
-    controls.movementSpeed = 2500
-    controls.rollSpeed = Math.PI / 6
-    controls.autoForward = false
-    controls.dragToLook = true
+    @clock = new THREE.Clock()
+
+    @controls = new FlyControls @worldv.camera, @container[0]
+    @controls.movementSpeed = 2500
+    @controls.rollSpeed = Math.PI / 6
+    @controls.autoForward = false
+    @controls.dragToLook = true
     
     setTimeout =>
       @trigger 'ready'
@@ -46,9 +48,12 @@ module.exports = class GameView extends Backbone.View
 
   render: (time) ->
     @frames++
+    delta = @clock.getDelta()
+
+    @controls.update delta
 
     @worldv.render(time)
-
+    
     #@canvas.getContext("2d").clearRect(0,0,700,500)
     #f.render(time) for f in @fleetvs
 
