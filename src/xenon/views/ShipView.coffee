@@ -8,9 +8,9 @@ module.exports = class ShipView extends Backbone.View
     radius = 50
     segments = 16
     rings = 16
-
+    
+    sphereMaterial = new THREE.MeshLambertMaterial(color: 0xCC0000, wireframe: true)
     @el = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, rings), sphereMaterial)
-    sphereMaterial = new THREE.MeshLambertMaterial(color: 0xCC0000)
     @prev = 0
 
   render: (time) ->

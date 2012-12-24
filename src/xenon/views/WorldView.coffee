@@ -25,8 +25,8 @@ module.exports = class GameView extends Backbone.View
 
   setupScene: ->
     # set the @scene size
-    WIDTH = 400
-    HEIGHT = 300
+    WIDTH = 800
+    HEIGHT = 600
 
     # set some @camera attributes
     VIEW_ANGLE = 45
@@ -64,11 +64,26 @@ module.exports = class GameView extends Backbone.View
     # add to the @scene
     @scene.add pointLight
 
+    # add the sky dome
+    skymap = THREE.ImageUtils.loadTexture '/images/sky.jpg' 
+    skymaterial = new THREE.MeshBasicMaterial
+      map: skymap
+      #transparent: true
+      side: THREE.DoubleSide
+      #depthTest: false
+
+    skygeo = new THREE.CubeGeometry( 5000, 5000, 5000 )
+    skymesh = new THREE.Mesh(skygeo, skymaterial)
+    skymesh.position.x = 20
+    @scene.add skymesh
+
+
 
     
   render: (time) ->
     #@sphere.rotation.x += 0.01;
     #@sphere.rotation.y += 0.01;
+    @camera.rotation.y += 0.001;
 
     view.render && view.render(time) for view in @subviews
     @renderer.render(@scene, @camera);
