@@ -21,4 +21,4 @@ module.exports = class ShipView extends Backbone.View
     @model.applyInterpolatedPosition(@el, time)
 
     @el.rotation.x = @model.interpolate 'rotation_x', time
-    
+    @model.applyInterpolatedPosition(@worldView.camera, time)
