@@ -1,7 +1,10 @@
 _                 = require 'underscore'
-DyzGame = require 'dyz/game'
+DyzGameOnServer = require 'dyz/GameOnServer'
+consts = require './index'
 
-module.exports = class Game extends DyzGame
+module.exports = class GameOnServer extends DyzGameOnServer
+  entityTypes: consts.entityTypes
+
   addShip: (attributes) ->
     @world.spawn 'Ship', attributes
   

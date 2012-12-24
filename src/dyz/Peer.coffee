@@ -1,4 +1,3 @@
-Game = require('dyz/Game')
 Backbone = require('backbone')
 
 module.exports = class Peer extends Backbone.Model

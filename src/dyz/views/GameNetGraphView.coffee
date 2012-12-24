@@ -1,5 +1,5 @@
 Backbone = require 'backbone'
-Game = require 'dyz/Game'
+Game = require 'dyz/GameOnClient'
 
 Array::rotate = (->
   unshift = Array::unshift

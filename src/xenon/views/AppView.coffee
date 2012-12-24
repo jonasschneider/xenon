@@ -1,6 +1,6 @@
 Backbone = require 'backbone'
 GameView = require './GameView'
-Game = require 'xenon/Game'
+Game = require 'xenon/GameOnClient'
 io       = require 'socket.io'
 
 module.exports = class AppView extends Backbone.View

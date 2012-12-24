@@ -1,4 +1,4 @@
-RootGame = require('dyz/Game')
+RootGameServer = require('dyz/GameOnServer')
 Entity = require('dyz/Entity')
 
 class Player extends Entity
@@ -6,7 +6,12 @@ class Player extends Entity
     age: 0
     name: 'Hugo'
 
-class Game extends RootGame
+class Game extends RootGameServer
+  entityTypes:
+    Player: Player
+
+RootGameClient = require('dyz/GameOnClient')
+class GameClient extends RootGameClient
   entityTypes:
     Player: Player
 
@@ -86,7 +91,7 @@ describe 'Game', ->
   describe 'lagging', ->
     it 'extrapolates', ->
       server = new Game onServer: true
-      client = new Game onServer: false
+      client = new GameClient onServer: false
 
       player = null
 
@@ -162,7 +167,7 @@ describe 'Game', ->
 
     it 'resets attributes back to the server value when the lag ends', ->
       server = new Game onServer: true
-      client = new Game onServer: false
+      client = new GameClient onServer: false
 
       player = null
 
