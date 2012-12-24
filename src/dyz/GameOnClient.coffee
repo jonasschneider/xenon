@@ -30,7 +30,7 @@ module.exports = class GameOnClient extends GameCommon
 
   sendClientInput: ->
     if @commandQueue.length > 0
-      @trigger 'publish', commands: @commandQueue
+      @trigger 'publish', ticks: @ticks, commands: @commandQueue
       @commandQueue = []
 
   # Returns a negative value if the client is lagging behind

@@ -12,6 +12,7 @@ module.exports = class extends GameCommon
       console.info "game got update ", JSON.stringify(e)
 
       if e.commands # for one-off commands
+        console.info "received client input for tick #{e.ticks} at server tick #{@ticks}"
         @tellQueue.push(to: '$self', what: cmd[0], with: cmd[1]) for cmd in e.commands
 
   tellSelf: (what, args...) ->

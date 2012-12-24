@@ -12,7 +12,10 @@ module.exports = class AppView extends Backbone.View
       socket = io.connect('http://'+location.hostname)
       
       socket.on 'update', (e) =>
-        @model.trigger 'update', e
+        console.warn "faking latency"
+        setTimeout =>
+          @model.trigger 'update', e
+        , 100
       
       socket.on 'log', (e) ->
         console.log e
