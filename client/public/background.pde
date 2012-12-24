@@ -168,9 +168,9 @@ class Particle {
     vel.add(new PVector((noise(n*10, curTime)-0.5)/2, (noise(n*100+50, curTime)-0.5)/2));
     
     if(timer > 40.0)
-      r += 1;
+      r += 1.5;
     if(timer < 10.0)
-      r -= 1;
+      r -= 1.5;
     loc.add(vel);
     timer -= 1.0;
   }
@@ -181,7 +181,7 @@ class Particle {
     
     translate(loc.x, loc.y)
     scale(r/10*(noise(n*10)));
-    
+    tint(40, 160, 255); 
     image(myImg, 0,0);
     
     popMatrix();

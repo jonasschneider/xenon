@@ -4,9 +4,11 @@ html {
 body {
   background: url(/images/splash.webp) no-repeat rgba(0,0,0,0.97);
   background-size: 100% auto;
+  background-position: center center;
   margin: 0;
   padding: 0;
   height: 100%;
+  overflow: hidden;
 }
 
 #container {
