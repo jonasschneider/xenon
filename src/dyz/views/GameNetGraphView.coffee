@@ -113,5 +113,6 @@ module.exports = class GameNetGraphView extends Backbone.View
     expectedPassedTicks = (new Date().getTime() - @timeAtRun) / 1000 * Game.ticksPerSecond + 1
     syncError = (@model.ticks - expectedPassedTicks).toFixed(1)
     ctx.fillText("#{@model.world.entities.length} ents, sync error #{syncError} ticks", 10, @graphHeight+20);
+    ctx.fillText("skew #{@model.clockSkew}ms", 10, @graphHeight+30);
 
     this

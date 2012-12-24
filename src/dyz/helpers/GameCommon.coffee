@@ -11,6 +11,7 @@ module.exports = class GameCommon
     @ticks = 0
     @running = false
     @world = new World @entityTypes
+    @clockSkew = 0
   
   halt: ->
     console.log 'HALTING'
@@ -44,13 +45,17 @@ module.exports = class GameCommon
   scheduleTick: ->
     val = @tick()
     
-    if @running
-      realtimeForNextTick = @tickZeroTime + (@ticks * GameCommon.tickLength)
-      timeout = realtimeForNextTick - new Date().getTime()
+    if val < 0 # see tickClient()
+      # we are behind
+      @log "skewing clock to get rid of lag"
+      @clockSkew += 10
+    else if val > 0 && @clockSkew > 0
+      @log "reducing clock skew"
+      @clockSkew -= 10
 
-      #if val < 0 # see tickClient()
-      #  @log "skewing clock to get rid of lag"
-      #  timeout += 10
+    if @running
+      realtimeForNextTick = @tickZeroTime + @clockSkew + (@ticks * GameCommon.tickLength)
+      timeout = realtimeForNextTick - new Date().getTime()
 
       if timeout < 0
         console.warn "WARNING: desynched, scheduling next tick immediately"
