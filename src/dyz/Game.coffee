@@ -19,17 +19,17 @@ module.exports = class Game extends Backbone.Model
       if e.entityMutation
         @dataReceivedSinceTick += JSON.stringify(e).length
         @serverUpdates[e.tick] = e
-        @lastReceivedUpdateTicks = e.tick
+        @lastReceivedUpdateTicks = e.tick # websockets have guaranteed order
 
       @run() if e.run
     
-    @ticks = 0
+    @ticks = 1
 
     # client vars
     @clientLag = 0
     @clientLagTotal = 0
-    @lastReceivedUpdateTicks = 0
-    @lastAppliedUpdateTicks = 0
+    @lastReceivedUpdateTicks = -1
+    @lastAppliedUpdateTicks = -1
     @dataReceivedSinceTick
 
     # common vars
@@ -82,6 +82,7 @@ module.exports = class Game extends Backbone.Model
     @tellQueue = []
     
   halt: ->
+    console.log 'HALTING'
     @running = false
   
   tickClient: ->
@@ -100,13 +101,14 @@ module.exports = class Game extends Backbone.Model
       next = ++@lastAppliedUpdateTicks
 
       lastAppliedUpdate = @serverUpdates[next]
+      console.log 'applying mutation', next, lastAppliedUpdate
       @world.applyMutation(lastAppliedUpdate.entityMutation)
 
       if next-2 > 0
         delete @serverUpdates[next-2] # keep the mutation that led to the recent tick and the one before that
 
 
-    if reachableTicks < @ticks
+    if reachableTicks < @ticks && reachableTicks > -1 # allow catching up
       ticksToExtrapolate = @ticks - reachableTicks
       startingPoint = reachableTicks
       console.log "client is lagging behind, going to extrapolate for #{ticksToExtrapolate} ticks from tick #{startingPoint}"
@@ -116,14 +118,15 @@ module.exports = class Game extends Backbone.Model
         @halt()
         return
 
-      if @lastAppliedUpdateTicks > 2
-
+      if @lastAppliedUpdateTicks > 2 && @serverUpdates[startingPoint] && @serverUpdates[startingPoint-1]
         @dirtyWorldResetSnapshot = @world.snapshotAttributes()
         # these are the mutations that led to the two last good ticks
         mut1 = @serverUpdates[startingPoint-1].entityMutation
         mut2 = @serverUpdates[startingPoint].entityMutation
 
         @world.state.extrapolate(mut1, mut2, ticksToExtrapolate)
+      else
+        console.log 'not enough data for extrapolate'
 
     endTime = new Date().getTime()
 
@@ -146,7 +149,7 @@ module.exports = class Game extends Backbone.Model
         ent.update && ent.update()
         @world.remove(ent) if ent.get('dead')
 
-    expectedPassedTicks = (new Date().getTime() - @timeAtRun) / 1000 * Game.ticksPerSecond
+    expectedPassedTicks = (new Date().getTime() - @tickZeroTime) / 1000 * Game.ticksPerSecond
     syncError = (@ticks - expectedPassedTicks).toFixed(1)
 
     endTime = new Date().getTime()
@@ -178,7 +181,7 @@ module.exports = class Game extends Backbone.Model
   run: -> # probably blows up synchronisation
     console.log "GOGOGOG"
     @trigger 'run'
-    @timeAtRun = new Date().getTime()
+    @tickZeroTime = new Date().getTime() - (@ticks * Game.tickLength)
     if @get('onServer')
       setTimeout =>
         @trigger 'publish', run: true
@@ -191,7 +194,7 @@ module.exports = class Game extends Backbone.Model
     @tick()
 
     if @running
-      realtimeForNextTick = @timeAtRun + (@ticks * Game.tickLength)
+      realtimeForNextTick = @tickZeroTime + (@ticks * Game.tickLength)
       timeout = realtimeForNextTick - new Date().getTime()
 
       if timeout < 0

@@ -58,13 +58,14 @@ class Match
     @game.tellSelf('addShip', name: ("Player " + (@players.length + 1)))
     console.log "made player ship"
     player = new NetworkedPlayer clientSocket, null
+    @players.push player
     
     player.bind 'update', (e) =>
       #player.socket.broadcast.emit 'update', e # security?
       @app.trigger 'update', e
     
     snapshot = @game.world.snapshotFull()
-    player.send 'applySnapshot', snapshot
+    player.send 'applySnapshotAndRun', snapshot, @game.ticks
   
   distributeUpdate: (update) ->
     @sendToAll('update', update)
@@ -83,7 +84,6 @@ class Match
 module.exports = {
   start: (io) ->
     match = new Match
-    
     io.sockets.on 'connection', (clientSocket) ->
       console.log 'connection'
       match.addPlayer clientSocket

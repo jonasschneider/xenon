@@ -1,7 +1,24 @@
 Backbone = require 'backbone'
+ShipView = require './ShipView'
 
 module.exports = class GameView extends Backbone.View
   initialize: (options) ->
+    @setupScene()
+    @model.bind 'spawn', @addEntity,  this
+    @subviews = []
+
+  addEntity: (e) ->
+    console.log "spawned entity", e
+    switch e.entityTypeName
+      when 'Ship'
+        shipv = new ShipView model: e  
+        @scene.add shipv.el
+        @subviews.push shipv
+
+      else
+        console.error "wtf is a #{e.type}?", e
+
+  setupScene: ->
     # set the @scene size
     WIDTH = 400
     HEIGHT = 300
@@ -31,25 +48,6 @@ module.exports = class GameView extends Backbone.View
     # attach the render-supplied DOM element
     @el = @renderer.domElement
 
-
-    # set up the sphere vars
-    radius = 50
-    segments = 16
-    rings = 16
-
-    # create a new mesh with
-    # sphere geometry - we will cover
-    # the sphereMaterial next!
-    sphereMaterial = new THREE.MeshLambertMaterial(color: 0xCC0000)
-    @sphere = sphere = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, rings), sphereMaterial)
-
-    # add the sphere to the @scene
-    @scene.add sphere
-
-
-    # create the sphere's material
-    
-
     # create a point light
     pointLight = new THREE.PointLight(0xFFFFFF)
 
@@ -60,9 +58,12 @@ module.exports = class GameView extends Backbone.View
 
     # add to the @scene
     @scene.add pointLight
+
+
     
   render: (time) ->
-    @sphere.rotation.x += 0.01;
-    @sphere.rotation.y += 0.01;
+    #@sphere.rotation.x += 0.01;
+    #@sphere.rotation.y += 0.01;
 
+    view.render && view.render(time) for view in @subviews
     @renderer.render(@scene, @camera);

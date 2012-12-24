@@ -19,9 +19,12 @@ module.exports = class AppView extends Backbone.View
       socket.on 'ping', (timestamp) =>
         socket.emit 'pong', timestamp
 
-      socket.on 'applySnapshot', (snapshot) =>
+      socket.on 'applySnapshotAndRun', (snapshot, ticks) =>
         console.log snapshot
         @model.game.world.applyFullSnapshot(snapshot)
+        @model.game.lastAppliedUpdateTicks = ticks
+        @model.game.ticks = ticks
+        @model.game.run()
       
       socket.on 'setLocalPlayerId',  (player) =>
         @localPlayerId = player

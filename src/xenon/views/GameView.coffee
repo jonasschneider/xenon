@@ -15,19 +15,19 @@ module.exports = class GameView extends Backbone.View
     throw "need app view" unless @appView
     @frames = 0
     
-    
-    @model.world.bind 'spawn', @addEntity,  this
-    
     @container = $('#nanowar')
 
     ng = new GameNetGraphView model: @model, gameView: this
     @container.append ng.render().el
 
-    @worldv = new WorldView(@model)
+    @worldv = new WorldView model: @model.world
     @container.append @worldv.el
 
     requestAnimFrame _(@render).bind(this)
-
+    
+    setTimeout =>
+      @trigger 'ready'
+    ,0
 
   render: (time) ->
     @frames++
@@ -43,8 +43,3 @@ module.exports = class GameView extends Backbone.View
     console.log 'update call'
     console.log(arguments)
   
-  addEntity: (e) ->
-    switch e.entityTypeName
-      when 'lol'
-      else
-        console.error "wtf is a #{e.type}?", e

@@ -7,4 +7,10 @@ module.exports = class Ship extends Entity
     y:      0
     size:   0
 
+    xrot: 0.0
+
     health: 100
+
+  update: ->
+    @set
+      xrot: ((@get('xrot') || 0) + 0.05)
