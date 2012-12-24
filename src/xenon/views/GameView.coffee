@@ -36,7 +36,7 @@ module.exports = class GameView extends Backbone.View
 
     @clock = new THREE.Clock()
 
-    @controls = new FlyControls @worldv.camera, @container[0]
+    @controls = new FlyControls @worldv.camera
     @controls.movementSpeed = 2500
     @controls.rollSpeed = Math.PI / 6
     @controls.autoForward = false
@@ -53,7 +53,7 @@ module.exports = class GameView extends Backbone.View
     @controls.update delta
 
     @worldv.render(time)
-    
+
     #@canvas.getContext("2d").clearRect(0,0,700,500)
     #f.render(time) for f in @fleetvs
 

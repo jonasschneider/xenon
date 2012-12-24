@@ -2,7 +2,8 @@ html {
   height: 100%;
 }
 body {
-  background: url(/images/background.jpg);
+  background: url(/images/splash.webp) no-repeat rgba(0,0,0,0.97);
+  background-size: 100% auto;
   margin: 0;
   padding: 0;
   height: 100%;
