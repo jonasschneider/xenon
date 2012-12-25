@@ -1,8 +1,8 @@
 {
     baseUrl: '../compiled',
-    name: '../lib/almond',
-    include: ['client'],
-    insertRequire: ['client'],
+    name: '../vendor/almond',
+    include: ['client-main'],
+    insertRequire: ['client-main'],
     out: 'public/built.js',
     wrap: false
 }
