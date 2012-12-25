@@ -15,7 +15,7 @@ module.exports = class WorldState
 
   set: (k, v) ->
     @dirty.push k
-    console.log("change #{k}: #{@internalState[k]} -> #{v}")
+    #console.log("change #{k}: #{@internalState[k]} -> #{v}")
 
     @previousValues[k] = @internalState[k]
     @internalState[k] = v

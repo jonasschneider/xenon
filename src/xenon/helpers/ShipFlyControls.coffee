@@ -15,6 +15,8 @@ module.exports = class ShipFlyControls
     rollLeft: 0
     rollRight: 0
 
+    attack: 0
+
   constructor: (target) ->
     @target = target
     
@@ -70,6 +72,9 @@ module.exports = class ShipFlyControls
         @moveState.rollLeft = 1
       when 69
         @moveState.rollRight = 1
+
+      when 32
+        @moveState.attack = 1
     @updateMovementVector()
     @updateRotationVector()
 
@@ -101,6 +106,9 @@ module.exports = class ShipFlyControls
         @moveState.rollLeft = 0
       when 69
         @moveState.rollRight = 0
+
+      when 32
+        @moveState.attack = 0
     @updateMovementVector()
     @updateRotationVector()
 
