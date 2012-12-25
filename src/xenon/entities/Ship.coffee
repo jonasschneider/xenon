@@ -24,24 +24,30 @@ module.exports = class Ship extends Entity
     
     movement = new THREE.Vector3(vx, vy, vz)
 
-    # get the input from the ship's owner
-    if @getRelation('boarded_by') && input = playerInput[@getRelation('boarded_by').get('clientId')]
-      if input["move"]["forward"] == 1 
+    getInput = =>
+      if @getRelation('boarded_by')
+        playerInput[@getRelation('boarded_by').get('clientId')]
+      else if @ai
+        @ai.getInput()
+
+    # get the input from the ship's owner or from the AI
+    if input = getInput()
+      if input["move_forward"] == 1 
         vz -= az if @get('velocity_z') > -100
       else
         vz += az if @get('velocity_z') < 0
 
-      if input["move"]["back"] == 1
+      if input["move_back"] == 1
         vz += az if @get('velocity_z') < 100
       else
         vz -= az if @get('velocity_z') > 0
 
-      if input["move"]["right"] == 1
+      if input["move_right"] == 1
         vx += ax if @get('velocity_x') < 100
       else
         vx -= ax if @get('velocity_x') > 0
 
-      if input["move"]["left"] == 1 
+      if input["move_left"] == 1 
         vx -= ax if @get('velocity_x') > -100
       else
         vx += ax if @get('velocity_x') < 0
@@ -49,11 +55,10 @@ module.exports = class Ship extends Entity
     
       movement = new THREE.Vector3(vx, vy, vz)
       # only use the quaternion when we have a client orientation
-      o = input["orientation"]
-      quat = new THREE.Quaternion(o.x, o.y, o.z, o.w)
+      quat = new THREE.Quaternion(input["orientation_x"], input["orientation_y"], input["orientation_z"], input["orientation_w"])
       quat.multiplyVector3(movement)
 
-      if input["move"]["attack"]
+      if input["attack"]
         # rocket position relative to ship
         rocketPos = new THREE.Vector3(0,0,-100 - Math.random()*300)
         quat.multiplyVector3(rocketPos)

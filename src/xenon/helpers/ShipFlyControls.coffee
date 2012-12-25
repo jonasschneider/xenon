@@ -3,19 +3,17 @@ THREE = require('three')
 _ = require('underscore')
 
 module.exports = class ShipFlyControls
+
   @initialState =
-    up: 0
-    down: 0
-    left: 0
-    right: 0
-    forward: 0
-    back: 0
-    pitchUp: 0
-    pitchDown: 0
-    yawLeft: 0
-    yawRight: 0
-    rollLeft: 0
-    rollRight: 0
+    move_left: 0
+    move_right: 0
+    move_forward: 0
+    move_back: 0
+
+    orientation_x: 0
+    orientation_y: 0
+    orientation_z: 0
+    orientation_w: 1
 
     attack: 0
 
@@ -29,12 +27,13 @@ module.exports = class ShipFlyControls
     @target.useQuaternion = true
     @tmpQuaternion = new THREE.Quaternion()
     @mouseStatus = 0
+
     @moveState = ShipFlyControls.initialState
+    @pitchDown = @yawRight = @rollRight = @pitchUp = @yawLeft = @rollLeft = 0
+
 
     @moveVector = new THREE.Vector3(0, 0, 0)
     @rotationVector = new THREE.Vector3(0, 0, 0)
-    @handleEvent = (event) ->
-      this[event.type] event  if typeof this[event.type] is "function"
 
     console.warn("binding ShipFlyControls to #{@target} with ship #{@ship}")
     document.addEventListener "mousemove", _(@mousemove).bind(this), false
@@ -48,32 +47,14 @@ module.exports = class ShipFlyControls
   keydown: (event) ->
     return  if event.altKey
     switch event.keyCode
-      when 16
-        @movementSpeedMultiplier = .1
       when 87
-        @moveState.forward = 1
+        @moveState.move_forward = 1
       when 83
-        @moveState.back = 1
+        @moveState.move_back = 1
       when 65
-        @moveState.left = 1
+        @moveState.move_left = 1
       when 68
-        @moveState.right = 1
-      when 82
-        @moveState.up = 1
-      when 70
-        @moveState.down = 1
-      when 38
-        @moveState.pitchUp = 1
-      when 40
-        @moveState.pitchDown = 1
-      when 37
-        @moveState.yawLeft = 1
-      when 39
-        @moveState.yawRight = 1
-      when 81
-        @moveState.rollLeft = 1
-      when 69
-        @moveState.rollRight = 1
+        @moveState.move_right = 1
 
       when 32
         @moveState.attack = 1
@@ -82,32 +63,14 @@ module.exports = class ShipFlyControls
 
   keyup: (event) ->
     switch event.keyCode
-      when 16
-        @movementSpeedMultiplier = 1
       when 87
-        @moveState.forward = 0
+        @moveState.move_forward = 0
       when 83
-        @moveState.back = 0
+        @moveState.move_back = 0
       when 65
-        @moveState.left = 0
+        @moveState.move_left = 0
       when 68
-        @moveState.right = 0
-      when 82
-        @moveState.up = 0
-      when 70
-        @moveState.down = 0
-      when 38
-        @moveState.pitchUp = 0
-      when 40
-        @moveState.pitchDown = 0
-      when 37
-        @moveState.yawLeft = 0
-      when 39
-        @moveState.yawRight = 0
-      when 81
-        @moveState.rollLeft = 0
-      when 69
-        @moveState.rollRight = 0
+        @moveState.move_right = 0
 
       when 32
         @moveState.attack = 0
@@ -131,8 +94,8 @@ module.exports = class ShipFlyControls
       container = @getContainerDimensions()
       halfWidth = container.size[0] / 2
       halfHeight = container.size[1] / 2
-      @moveState.yawLeft = -((event.pageX - container.offset[0]) - halfWidth) / halfWidth
-      @moveState.pitchDown = ((event.pageY - container.offset[1]) - halfHeight) / halfHeight
+      @yawLeft = -((event.pageX - container.offset[0]) - halfWidth) / halfWidth
+      @pitchDown = ((event.pageY - container.offset[1]) - halfHeight) / halfHeight
       @updateRotationVector()
 
   mouseup: (event) ->
@@ -140,7 +103,7 @@ module.exports = class ShipFlyControls
     event.stopPropagation()
     if @dragToLook
       @mouseStatus--
-      @moveState.yawLeft = @moveState.pitchDown = 0
+      @yawLeft = @pitchDown = 0
     else
       switch event.button
         when 0
@@ -162,15 +125,15 @@ module.exports = class ShipFlyControls
     @target.matrixWorldNeedsUpdate = true
 
   updateMovementVector: ->
-    forward = (if (@moveState.forward or (@autoForward and not @moveState.back)) then 1 else 0)
-    @moveVector.x = (-@moveState.left + @moveState.right)
-    @moveVector.y = (-@moveState.down + @moveState.up)
-    @moveVector.z = (-forward + @moveState.back)
+    forward = (if (@moveState.move_forward or (@autoForward and not @moveState.move_back)) then 1 else 0)
+    @moveVector.x = (-@moveState.move_left + @moveState.move_right)
+    @moveVector.y = (-@moveState.move_down + @moveState.move_up)
+    @moveVector.z = (-forward + @moveState.move_back)
 
   updateRotationVector: ->
-    @rotationVector.x = (-@moveState.pitchDown + @moveState.pitchUp)
-    @rotationVector.y = (-@moveState.yawRight + @moveState.yawLeft)
-    @rotationVector.z = (-@moveState.rollRight + @moveState.rollLeft)
+    @rotationVector.x = (-@pitchDown + @pitchUp)
+    @rotationVector.y = (-@yawRight + @yawLeft)
+    @rotationVector.z = (-@rollRight + @rollLeft)
 
   getContainerDimensions: ->
     size: [window.innerWidth, window.innerHeight]

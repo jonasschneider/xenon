@@ -26,7 +26,6 @@ module.exports = class GameView extends Backbone.View
         if @client.localPlayerId == e.get('clientId')
           @localPlayer = e
 
-
     $("#move-btn").click =>
       console.warn "click occured at #{@model.ticks}"
       @model.queueClientCommand 'moveStuff'
@@ -46,7 +45,7 @@ module.exports = class GameView extends Backbone.View
     @clock = new THREE.Clock()
 
     @controls = new ShipFlyControls @worldv.camera
-    #@controls = new FlyControls(new THREE.PerspectiveCamera(40, 1, 1, 1))
+    #@controls = new ShipFlyControls(new THREE.PerspectiveCamera(40, 1, 1, 1))
     @controls.movementSpeed = 2500
     @controls.rollSpeed = Math.PI / 6
     @controls.autoForward = false
@@ -57,12 +56,11 @@ module.exports = class GameView extends Backbone.View
       @halt = true
 
     @model.bind 'read-controls', =>
-      @model.inputState.move = @controls.moveState
-      @model.inputState.orientation =
-        x: @worldv.camera.quaternion.x
-        y: @worldv.camera.quaternion.y
-        z: @worldv.camera.quaternion.z
-        w: @worldv.camera.quaternion.w
+      @model.inputState = _(@controls.moveState).clone()
+      @model.inputState["orientation_x"] = @worldv.camera.quaternion.x
+      @model.inputState["orientation_y"] = @worldv.camera.quaternion.y
+      @model.inputState["orientation_z"] = @worldv.camera.quaternion.z
+      @model.inputState["orientation_w"] = @worldv.camera.quaternion.w
     
     setTimeout =>
       @trigger 'ready'

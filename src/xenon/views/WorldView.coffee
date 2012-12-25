@@ -61,7 +61,7 @@ module.exports = class GameView extends Backbone.View
     @renderer.gammaOutput = true
     @renderer.physicallyBasedShading = true
 
-
+    console.log(@camera)
     # add the @camera to the @scene
     @scene.add @camera
 
