@@ -14,9 +14,8 @@ requestAnimFrame = (->
 
 module.exports = class GameView extends Backbone.View
   initialize: (options)->
-    @appView = options.appView
-    @clientId
-    throw "need app view" unless @appView
+    @client = options.client
+    throw "need client" unless @client
     @frames = 0
     
     @container = $('#nanowar')
@@ -24,7 +23,7 @@ module.exports = class GameView extends Backbone.View
     @model.world.bind 'spawn', (e) =>
       return unless e.entityTypeName == 'Player'
       e.bind 'change', =>
-        if @appView.localPlayerId == e.get('clientId')
+        if @client.localPlayerId == e.get('clientId')
           @localPlayer = e
 
 

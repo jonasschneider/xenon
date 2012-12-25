@@ -8,7 +8,7 @@ test:
 
 serve: build
 	# directly run it like this so we don't get the RequireJS-wrapped version
-	true; while [ $$? = 0 ]; do node_modules/coffee-script/bin/coffee src/server.coffee --xenon; done
+	true; while [ $$? = 0 ]; do node_modules/coffee-script/bin/coffee src/server-main.coffee --xenon; done
 
 build:
 	mkdir -p compiled

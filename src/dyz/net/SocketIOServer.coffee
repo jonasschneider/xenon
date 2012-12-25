@@ -1,4 +1,3 @@
-App     = require('./Peer')
 util    = require 'util'
 _       = require 'underscore'
 Backbone= require 'backbone'
@@ -41,9 +40,8 @@ class Match
     @players = []
     
     @game = new Game onServer: true
-    @app = new App game: @game
     
-    @app.bind 'publish', @distributeUpdate, this
+    @game.bind 'publish', @distributeUpdate, this
     
     @game.world.enableStrictMode()
 
@@ -59,7 +57,7 @@ class Match
     
     player.bind 'update', (e) =>
       #player.socket.broadcast.emit 'update', e # security?
-      @app.trigger 'update', _.extend(e, player: player.id)
+      @game.trigger 'update', _.extend(e, player: player.id)
     
     snapshot = @game.world.snapshotFull()
     player.send 'applySnapshotAndRun', snapshot, @game.ticks
