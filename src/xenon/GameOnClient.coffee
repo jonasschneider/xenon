@@ -1,24 +1,13 @@
 _                 = require 'underscore'
 DyzGameOnClient   = require 'dyz/GameOnClient'
 consts = require './index'
+ShipFlyControls = require 'xenon/helpers/ShipFlyControls'
 
 module.exports = class GameOnClient extends DyzGameOnClient
   entityTypes: consts.entityTypes
 
   inputState:
-    move:
-      up: 0
-      down: 0
-      left: 0
-      right: 0
-      forward: 0
-      back: 0
-      pitchUp: 0
-      pitchDown: 0
-      yawLeft: 0
-      yawRight: 0
-      rollLeft: 0
-      rollRight: 0
+    move: ShipFlyControls.initialState
     orientation:
       x: 0
       y: 0
