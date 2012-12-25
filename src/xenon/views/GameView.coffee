@@ -19,7 +19,6 @@ module.exports = class GameView extends Backbone.View
     throw "need app view" unless @appView
     @frames = 0
     
-    console.log($)
     @container = $('#nanowar')
 
     @model.world.bind 'spawn', (e) =>

@@ -10,9 +10,9 @@ module.exports = class AppView extends Backbone.View
     @gameDisplay.bind 'ready', =>
       console.log("connecting..")
       console.warn "faking latency"
-      #fakeLagDown = fakeLagUp = 0
       fakeLagDown = 90
       fakeLagUp = 130
+      #fakeLagDown = fakeLagUp = 0
       socket = io.connect('http://'+location.hostname)
       
       socket.on 'update', (e) =>
@@ -28,15 +28,13 @@ module.exports = class AppView extends Backbone.View
         socket.emit 'pong', timestamp
 
       socket.on 'applySnapshotAndRun', (snapshot, ticks) =>
-        console.log snapshot
+        console.log 'applySnapshotAndRun', ticks, snapshot
+        
         @model.game.world.applyFullSnapshot(snapshot)
         @model.game.lastAppliedUpdateTicks = ticks
         @model.game.ticks = ticks
         
-        # delay for one tick in order to, well, compensate for the server being faster?
-        setTimeout =>
-          @model.game.run()
-        , Game.tickLength
+        @model.game.run()
       
       socket.on 'setLocalPlayerId',  (player) =>
         @localPlayerId = player
