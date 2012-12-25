@@ -29,8 +29,8 @@ module.exports = class GameView extends Backbone.View
 
   setupScene: ->
     # set the @scene size
-    WIDTH = 800
-    HEIGHT = 600
+    WIDTH = window.innerWidth
+    HEIGHT = window.innerHeight
 
     # set some @camera attributes
     VIEW_ANGLE = 45
@@ -65,6 +65,7 @@ module.exports = class GameView extends Backbone.View
 
     # attach the render-supplied DOM element
     @el = @renderer.domElement
+    $(@el).css(position: 'absolute', top: 0, left: 0, zIndex: -1)
 
     # create a point light
     pointLight = new THREE.PointLight(0xFFFFFF)
