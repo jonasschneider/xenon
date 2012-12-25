@@ -1,3 +1,5 @@
+THREE = require('three')
+
 _ = require('underscore')
 
 module.exports = class ShipFlyControls

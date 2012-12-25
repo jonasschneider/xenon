@@ -1,4 +1,5 @@
 Backbone = require 'backbone'
+THREE = require('three')
 
 module.exports = class ShipView extends Backbone.View
   el: true

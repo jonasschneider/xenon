@@ -3,6 +3,8 @@ ShipView = require './ShipView'
 RocketView = require './RocketView'
 StationView = require './StationView'
 BigAssLensFlare = require 'xenon/helpers/BigAssLensFlare'
+$ = require('jquery')
+THREE = require('three')
 
 module.exports = class GameView extends Backbone.View
   initialize: (options) ->

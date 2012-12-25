@@ -143,6 +143,15 @@ http://en.wikipedia.org/wiki/Entity-attribute-value_model
 the world state is kept as a flat key-value dict
 -> quantitative changes (extrapolation) are easy
 
+Types of entities:
+- Shared entities (default)
+  These entities are fully mirrored from server to client.
+  If there is state that is only required on the server, it is stored in instance variables (experimental)
+to come:
+- Server-only entities
+- Client-only entities
+
+
 
 TODO:
   - reduce mutations so multiple changes to a single attribute during a mutate() call do not produce redundant data

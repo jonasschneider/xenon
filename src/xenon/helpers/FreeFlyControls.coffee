@@ -1,3 +1,5 @@
+THREE = require('three')
+
 module.exports = FlyControls = (object, domElement) ->
   bind = (scope, fn) ->
     ->

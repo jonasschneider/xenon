@@ -1,3 +1,4 @@
+THREE = require('three')
 textureFlare0 = THREE.ImageUtils.loadTexture( "/images/textures/lensflare/lensflare0.png" )
 textureFlare2 = THREE.ImageUtils.loadTexture( "/images/textures/lensflare/lensflare2.png" )
 textureFlare3 = THREE.ImageUtils.loadTexture( "/images/textures/lensflare/lensflare3.png" )

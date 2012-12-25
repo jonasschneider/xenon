@@ -1,5 +1,6 @@
 Backbone = require 'backbone'
 BigAssLensFlare = require 'xenon/helpers/BigAssLensFlare'
+THREE = require('three')
 
 module.exports = class StationView extends Backbone.View
   el: true

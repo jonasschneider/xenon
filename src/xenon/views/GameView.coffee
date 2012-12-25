@@ -1,9 +1,11 @@
 Backbone = require 'backbone'
 GameNetGraphView = require 'dyz/views/GameNetGraphView'
+THREE = require('three')
 
 ShipFlyControls = require 'xenon/helpers/ShipFlyControls'
 WorldView = require './WorldView'
 _                 = require 'underscore'
+$ = require('jquery')
 
 requestAnimFrame = (->
   window.requestAnimationFrame or window.webkitRequestAnimationFrame or window.mozRequestAnimationFrame or window.oRequestAnimationFrame or window.msRequestAnimationFrame or (callback) ->
@@ -17,6 +19,7 @@ module.exports = class GameView extends Backbone.View
     throw "need app view" unless @appView
     @frames = 0
     
+    console.log($)
     @container = $('#nanowar')
 
     @model.world.bind 'spawn', (e) =>
