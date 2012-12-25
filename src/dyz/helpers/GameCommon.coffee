@@ -58,7 +58,7 @@ module.exports = class GameCommon
       timeout = realtimeForNextTick - new Date().getTime()
 
       if timeout < 0
-        if @abortOnDesync
+        if @abortOnDesync or timeout < -10000
           throw "desynced! next tick should be in #{timeout}ms.."
         else
           console.warn "WARNING: desynched, scheduling next tick immediately"

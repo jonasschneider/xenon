@@ -154,11 +154,10 @@ to come:
 
 
 TODO:
-  - reduce mutations so multiple changes to a single attribute during a mutate() call do not produce redundant data
-  - notify an entity if its attributes are changed behind the scenes (applying snapshots)
-  - completely separate the spawning/persistentobject system from the raw attribute/mutation storage
-  - try out how drawing fleets in a canvas affects performance
-  - add entity messages -> and then get EnhancerNode affectedCells:add etc. up to date
-  - use protocol buffers for sending the updates
+  - optimize mutations so multiple changes to a single attribute during a mutate() call do not produce redundant data
+  - notify an entity if its attributes are changed when applying a snapshot
+  - add entity messages
+  - use protocol buffers/BinaryJS for sending the updates
+  - use shaders for interpolation?
 
   https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking
