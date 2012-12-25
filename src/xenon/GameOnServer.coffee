@@ -4,6 +4,7 @@ consts = require './index'
 
 module.exports = class GameOnServer extends DyzGameOnServer
   entityTypes: consts.entityTypes
+  abortOnDesync: true
 
   loadMap: ->
     @world.spawn 'Station', position_x: 500, position_z: -2000, position_y: 100
