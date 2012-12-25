@@ -73,7 +73,7 @@ module.exports = class Entity
     if id = @get(idKey)
       @collection.get(id)
     else
-      undefined
+      null
 
   toString: ->
     @id || super

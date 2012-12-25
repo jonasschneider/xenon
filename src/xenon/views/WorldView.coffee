@@ -24,6 +24,9 @@ module.exports = class GameView extends Backbone.View
       when 'Station'
         sv = new StationView model: e, worldView: this
         @subviews.push sv
+
+      when 'Player'
+        # nothing to do
       else
         console.error "wtf is a #{e.entityTypeName}?", e
 

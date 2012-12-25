@@ -5,7 +5,7 @@ _                 = require 'underscore'
 module.exports = class GameCommon
   entityTypes: {}
   log: (stuff...) ->
-    console.info stuff...
+    #console.info stuff...
 
   constructor: ->
     @ticks = 0

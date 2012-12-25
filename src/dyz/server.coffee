@@ -11,8 +11,9 @@ class NetworkedPlayer
     @name = name
     @id = ++id
     
-    @socket.emit 'log', 'You are: ' + @toString()
-    
+    @sendId()
+    @socket.emit 'log', "You are player ##{@id}"
+
     pingSentAt = null
     @socket.on 'pong', (pingSentAt) => 
       @latency = new Date().getTime() - pingSentAt
@@ -29,8 +30,9 @@ class NetworkedPlayer
       clean.push arg
     
     @socket.emit.apply(@socket, clean)
-  updateLocalPlayerId: ->
-    @socket.emit 'setLocalPlayerId', @playerent.id
+  
+  sendId: ->
+    @socket.emit 'setLocalPlayerId', @id
 
 _.extend(NetworkedPlayer.prototype, Backbone.Events)
 
@@ -52,7 +54,7 @@ class Match
   addPlayer: (clientSocket) ->
     console.log clientSocket.id + " connected"
     player = new NetworkedPlayer clientSocket, ("Player " + (@players.length + 1))
-    @game.addPlayer player
+    @game.onPlayerJoin player
     @players.push player
     
     player.bind 'update', (e) =>

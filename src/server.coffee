@@ -1,4 +1,4 @@
-require('webkit-devtools-agent')
+#require('webkit-devtools-agent')
 socketio = require('socket.io')
 app = require('../client/webserver').app
 port = process.env.PORT || 2000

@@ -12,7 +12,7 @@ module.exports = class Peer extends Backbone.Model
         game: e
     
     @bind 'publish', (e) =>
-      console.log("app sending update: "+JSON.stringify e)
+      @game.log "app sending update: "+JSON.stringify(e)
     
     @bind 'update', (e) => 
       #console.log("app getting update: "+JSON.stringify e)

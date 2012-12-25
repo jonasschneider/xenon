@@ -13,10 +13,18 @@ requestAnimFrame = (->
 module.exports = class GameView extends Backbone.View
   initialize: (options)->
     @appView = options.appView
+    @clientId
     throw "need app view" unless @appView
     @frames = 0
     
     @container = $('#nanowar')
+
+    @model.world.bind 'spawn', (e) =>
+      return unless e.entityTypeName == 'Player'
+      e.bind 'change', =>
+        if @appView.localPlayerId == e.get('clientId')
+          @localPlayer = e
+
 
     $("#move-btn").click =>
       console.warn "click occured at #{@model.ticks}"
@@ -66,6 +74,10 @@ module.exports = class GameView extends Backbone.View
     @controls.update delta
 
     @worldv.render(time)
+    
+    if @localPlayer
+      if ship = @localPlayer.getRelation('boarded_ship')
+        ship.applyInterpolatedPosition(@worldv.camera, time)
 
     #@canvas.getContext("2d").clearRect(0,0,700,500)
     #f.render(time) for f in @fleetvs

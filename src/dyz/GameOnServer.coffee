@@ -12,7 +12,7 @@ module.exports = class extends GameCommon
     @loadMap() if @loadMap
 
     @bind 'update', (e) =>
-      console.info "game got update ", JSON.stringify(e)
+      @log "game got update ", JSON.stringify(e)
 
       if e.player
         if e.commands # for one-off commands
@@ -20,7 +20,7 @@ module.exports = class extends GameCommon
 
         if e.inputState
           # TODO: record history
-          console.info "received client input from #{e.player} for tick #{e.ticks} at server tick #{@ticks}"
+          @log "received client input from #{e.player} for tick #{e.ticks} at server tick #{@ticks}"
           @playerInput[e.player] = e.inputState
   
   tellSelf: (what, args...) ->
@@ -31,7 +31,7 @@ module.exports = class extends GameCommon
     console.warn "new player", player
 
   runTell: (tell) ->
-    console.log("running:", tell)
+    @log("running:", tell)
     throw 'invalid target' if tell.to != '$self' # TODO
     this[tell.what].call(this, tell.with...)
 
@@ -43,7 +43,7 @@ module.exports = class extends GameCommon
     @tellQueue = []
     
   tickAction: ->
-    console.info "=== SERVER TICKING #{@ticks}"
+    @log "=== SERVER TICKING #{@ticks}"
     startTime = new Date().getTime()
 
     entityMutation = @world.mutate =>
@@ -63,4 +63,4 @@ module.exports = class extends GameCommon
       serverProcessingTime: (endTime-startTime)
       syncError: syncError
 
-    console.info "=== SERVER TICKED TO #{@ticks}"
+    @log "=== SERVER TICKED TO #{@ticks}"
