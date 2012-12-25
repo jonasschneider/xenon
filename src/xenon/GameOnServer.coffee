@@ -9,6 +9,7 @@ module.exports = class GameOnServer extends DyzGameOnServer
   loadMap: ->
     @world.spawn 'Station', position_x: 500, position_z: -2000, position_y: 100
     @world.spawn 'Station', position_x: -500, position_z: -2000, position_y: 100
+    @world.spawn 'Planet', position_x: 2500, position_z: -4000, position_y: 0
 
   onPlayerJoin: (internalPlayer) ->
     @tellSelf('spawnPlayerShip', internalPlayer)

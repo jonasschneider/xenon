@@ -2,6 +2,7 @@ Backbone = require 'backbone'
 ShipView = require './ShipView'
 RocketView = require './RocketView'
 StationView = require './StationView'
+PlanetView = require './PlanetView'
 BigAssLensFlare = require 'xenon/helpers/BigAssLensFlare'
 $ = require('jquery')
 THREE = require('three')
@@ -27,6 +28,9 @@ module.exports = class GameView extends Backbone.View
         sv = new StationView model: e, worldView: this
         @subviews.push sv
 
+      when 'Planet'
+        sv = new PlanetView model: e, worldView: this
+        @subviews.push sv
       when 'Player'
         # nothing to do
       else
