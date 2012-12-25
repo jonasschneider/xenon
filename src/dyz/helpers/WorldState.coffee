@@ -90,7 +90,7 @@ module.exports = class WorldState
 
   interpolate: (key, fraction) ->
     v1 = @previousValues[key]
-    v2 = @get(key)
+    v2 = @internalState[key]
     return v2 unless v1
 
     v1 + (v2 - v1) * fraction
