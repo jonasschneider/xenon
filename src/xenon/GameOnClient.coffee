@@ -19,6 +19,11 @@ module.exports = class GameOnClient extends DyzGameOnClient
       yawRight: 0
       rollLeft: 0
       rollRight: 0
+    orientation:
+      x: 0
+      y: 0
+      z: 0 # unused
+      w: 1 # unused
 
 
   sendClientInput: ->

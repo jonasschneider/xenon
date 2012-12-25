@@ -13,9 +13,9 @@ module.exports = Object3D =
     rotation_z: 0
   
   methods:
-    # Apply the interpolated 3D position to a THREE.js mesh (or anything that has a position vector prop)
+    # Apply the interpolated 3D position to a THREE.js mesh
+    # (or anything that has a position vector property)
     applyInterpolatedPosition: (el, time) ->
-      console.info el, @interpolate 'position_x' 
       el.position.x = @interpolate 'position_x', time
       el.position.y = @interpolate 'position_y', time
       el.position.z = @interpolate 'position_z', time

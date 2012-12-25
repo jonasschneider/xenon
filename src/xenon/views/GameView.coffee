@@ -49,6 +49,11 @@ module.exports = class GameView extends Backbone.View
 
     @model.bind 'read-controls', =>
       @model.inputState.move = @controls.moveState
+      @model.inputState.orientation =
+        x: @worldv.camera.quaternion.x
+        y: @worldv.camera.quaternion.y
+        z: @worldv.camera.quaternion.z
+        w: @worldv.camera.quaternion.w
     
     setTimeout =>
       @trigger 'ready'

@@ -1,9 +1,15 @@
+define(function (require, exports, module) {
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author Larry Battle / http://bateru.com/news
  */
 
-var THREE = THREE || { REVISION: '53' };
+var self = this;
+var window = {};
+
+
+var THREE = exports;
+THREE.REVISION = '53';
 
 self.console = self.console || {
 
@@ -35251,3 +35257,5 @@ THREE.ShaderSprite = {
 	}
 
 };
+
+})
