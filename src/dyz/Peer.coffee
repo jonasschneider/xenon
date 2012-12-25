@@ -1,4 +1,5 @@
 Backbone = require('backbone')
+_       = require 'underscore'
 
 module.exports = class Peer extends Backbone.Model
   urlRoot: '/app'
@@ -17,6 +18,8 @@ module.exports = class Peer extends Backbone.Model
       #console.log("app getting update: "+JSON.stringify e)
       
       #@is_publishing = false
-      @game.trigger 'update', e.game if e.game?
+      if e.game?
+        _.extend(e.game, player: e.player) if e.player # used by server to identify client
+        @game.trigger 'update', e.game
       @set e.set if e.set?
       #@is_publishing = true

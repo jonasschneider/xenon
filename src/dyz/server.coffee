@@ -3,10 +3,13 @@ util    = require 'util'
 _       = require 'underscore'
 Backbone= require 'backbone'
 
+id = 0
+
 class NetworkedPlayer
   constructor: (socket, name) ->
     @socket = socket
     @name = name
+    @id = ++id
     
     @socket.emit 'log', 'You are: ' + @toString()
     
@@ -54,7 +57,7 @@ class Match
     
     player.bind 'update', (e) =>
       #player.socket.broadcast.emit 'update', e # security?
-      @app.trigger 'update', e
+      @app.trigger 'update', _.extend(e, player: player.id)
     
     snapshot = @game.world.snapshotFull()
     player.send 'applySnapshotAndRun', snapshot, @game.ticks

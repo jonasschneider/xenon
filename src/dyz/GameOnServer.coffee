@@ -9,18 +9,20 @@ module.exports = class extends GameCommon
     @tellQueue = []
     @playerInput = {}
 
+    @loadMap() if @loadMap
+
     @bind 'update', (e) =>
       console.info "game got update ", JSON.stringify(e)
 
-      if e.commands # for one-off commands
-        @tellQueue.push(to: '$self', what: cmd[0], with: cmd[1]) for cmd in e.commands
+      if e.player
+        if e.commands # for one-off commands
+          @tellQueue.push(to: '$self', what: cmd[0], with: cmd[1]) for cmd in e.commands
 
-      if e.inputState
-        console.info "received client input for tick #{e.ticks} at server tick #{@ticks}"
-        @playerInput["Player0"] = e.inputState
-    
-    @loadMap() if @loadMap
-
+        if e.inputState
+          # TODO: record history
+          console.info "received client input from #{e.player} for tick #{e.ticks} at server tick #{@ticks}"
+          @playerInput[e.player] = e.inputState
+  
   tellSelf: (what, args...) ->
     tell = to: '$self', what: what, with: args
     @tellQueue.push tell

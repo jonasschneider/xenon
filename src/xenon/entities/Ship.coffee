@@ -8,11 +8,14 @@ module.exports = class Ship extends Entity
   attributeSpecs:
     name:   'Unknown Ship'
     size:   0
+    player: 0 # ID
 
     health: 100
 
   update: (playerInput) ->
-    return unless input = playerInput["Player0"]
+    # get the input from the ship's owner
+    return unless @get('player') && input = playerInput[@get('player')]
+    
     vx = @get('velocity_x')
     ax = 5
 
