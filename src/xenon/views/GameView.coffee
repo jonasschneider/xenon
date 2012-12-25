@@ -73,12 +73,13 @@ module.exports = class GameView extends Backbone.View
 
     @controls.update delta
 
-    @worldv.render(time)
     
     if @localPlayer
       if ship = @localPlayer.getRelation('boarded_ship')
         ship.applyInterpolatedPosition(@worldv.camera, time)
+        @worldv.camera.translateZ(400)
 
+    @worldv.render(time)
     #@canvas.getContext("2d").clearRect(0,0,700,500)
     #f.render(time) for f in @fleetvs
 
