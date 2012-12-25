@@ -9,7 +9,7 @@ process.on 'SIGHUP', ->
 
 server = require('http').createServer(app)
 
-io = socketio.listen(server)
+#io = socketio.listen(server)
 
 server.listen(port)
 
@@ -19,7 +19,8 @@ requirejs.config
   baseUrl: 'compiled'
   nodeRequire: require
 
-requirejs(['dyz/net/SocketIOServer', 'xenon/GameOnServer'], (server, Game) ->
-  server.start(io, Game)
+requirejs(['dyz/net/SocketIOServer', 'dyz/net/BinaryServer', 'xenon/GameOnServer'], (IOserver, BinaryServer, Game) ->
+  #IOserver.start(io, Game)
+  BinaryServer.start(server, Game)
   console.log("Server running at port " + port)
 )
