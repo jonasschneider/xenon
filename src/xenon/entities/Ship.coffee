@@ -14,9 +14,6 @@ module.exports = class Ship extends Entity
 
 
   update: (playerInput) ->
-    # get the input from the ship's owner
-    return unless @getRelation('boarded_by') && input = playerInput[@getRelation('boarded_by').get('clientId')]
-    
     vx = @get('velocity_x')
     ax = 5
 
@@ -25,33 +22,56 @@ module.exports = class Ship extends Entity
 
     vy = 0
     
-    if input["move"]["forward"] == 1 
-      vz -= az if @get('velocity_z') > -100
-    else
-      vz += az if @get('velocity_z') < 0
+    movement = new THREE.Vector3(vx, vy, vz)
 
-    if input["move"]["back"] == 1
-      vz += az if @get('velocity_z') < 100
-    else
-      vz -= az if @get('velocity_z') > 0
+    # get the input from the ship's owner
+    if @getRelation('boarded_by') && input = playerInput[@getRelation('boarded_by').get('clientId')]
+      if input["move"]["forward"] == 1 
+        vz -= az if @get('velocity_z') > -100
+      else
+        vz += az if @get('velocity_z') < 0
 
-    if input["move"]["right"] == 1
-      vx += ax if @get('velocity_x') < 100
-    else
-      vx -= ax if @get('velocity_x') > 0
+      if input["move"]["back"] == 1
+        vz += az if @get('velocity_z') < 100
+      else
+        vz -= az if @get('velocity_z') > 0
 
-    if input["move"]["left"] == 1 
-      vx -= ax if @get('velocity_x') > -100
-    else
-      vx += ax if @get('velocity_x') < 0
+      if input["move"]["right"] == 1
+        vx += ax if @get('velocity_x') < 100
+      else
+        vx -= ax if @get('velocity_x') > 0
+
+      if input["move"]["left"] == 1 
+        vx -= ax if @get('velocity_x') > -100
+      else
+        vx += ax if @get('velocity_x') < 0
 
     
-    movement = new THREE.Vector3(vx, vy, vz)
-    o = input["orientation"]
-    quat = new THREE.Quaternion(o.x, o.y, o.z, o.w)
-    quat.multiplyVector3(movement)
+      movement = new THREE.Vector3(vx, vy, vz)
+      # only use the quaternion when we have a client orientation
+      o = input["orientation"]
+      quat = new THREE.Quaternion(o.x, o.y, o.z, o.w)
+      quat.multiplyVector3(movement)
+
+      if input["move"]["attack"]
+        # rocket position relative to ship
+        rocketPos = new THREE.Vector3(0,0,-100 - Math.random()*300)
+        quat.multiplyVector3(rocketPos)
 
 
+        rocketVel = new THREE.Vector3(0,0,-100)
+        quat.multiplyVector3(rocketVel)
+
+        if @ticks() % 10 == 0
+          @collection.spawn 'Rocket',
+            position_x: @get('position_x') + rocketPos.x
+            position_y: @get('position_y') + rocketPos.y
+            position_z: @get('position_z') + rocketPos.z
+
+            velocity_x: rocketVel.x
+            velocity_y: rocketVel.y
+            velocity_z: rocketVel.z
+    
     @set
       #rotation_x: @get('rotation_x') + 0.05
 
@@ -62,23 +82,3 @@ module.exports = class Ship extends Entity
       velocity_x: vx
       velocity_y: vy
       velocity_z: vz
-
-    delta = 
-    if input["move"]["attack"]
-      # rocket position relative to ship
-      rocketPos = new THREE.Vector3(0,0,-100 - Math.random()*300)
-      quat.multiplyVector3(rocketPos)
-
-
-      rocketVel = new THREE.Vector3(0,0,-100)
-      quat.multiplyVector3(rocketVel)
-
-      if @ticks() % 10 == 0
-        @collection.spawn 'Rocket',
-          position_x: @get('position_x') + rocketPos.x
-          position_y: @get('position_y') + rocketPos.y
-          position_z: @get('position_z') + rocketPos.z
-
-          velocity_x: rocketVel.x
-          velocity_y: rocketVel.y
-          velocity_z: rocketVel.z

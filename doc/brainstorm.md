@@ -6,7 +6,8 @@
 spielermodifizierbare Schiffe: Waffen etc. ankleben (& eigene Skins)
 
 Schiffstypen: Behemoth, Scout(stealth,schwach), Hawk(schnell)
-Schiffsupgrade (Reparaturbots, Schilde (leichter energiebonus wenn im eigenen sektor))
+Schiffsupgrades (Reparaturbots, Schilde (leichter energiebonus wenn im eigenen sektor))
+Schiffe als Wireframes, Planeten fotorealistisch? (-> Schiffe als Xenon-Projektionen, trolol)
 
 Schiffe sind Drohnen, gesteuert von den Stationen -> normalerweise autonom (KI), "Human Operators" als Elite
 Ressourcendepots in der Mitte -> Xenon?
