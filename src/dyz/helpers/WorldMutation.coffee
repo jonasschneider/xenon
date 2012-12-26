@@ -57,7 +57,8 @@ module.exports = class WorldMutation
 
   getBinaryComponents: ->
     changes = @getChanges()
-    console.log changes
+    #console.log changes
+    return [new ArrayBuffer(0), []] if changes.length == 0
     buffer = new ArrayBuffer(changes.length*8)
     aside = []
     offset = 0
@@ -90,7 +91,6 @@ module.exports = class WorldMutation
 
   @fromBinaryComponents: (world, buffer, aside) ->
     throw new TypeError() unless buffer instanceof ArrayBuffer
-    console.log [buffer, aside]
     
     changes = []
     offset = 0

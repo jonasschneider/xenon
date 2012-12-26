@@ -2,7 +2,7 @@
 
 module.exports = class BinaryJSClient
   constructor: (Game) ->
-    @game = new Game
+    @game = new Game useBinary: true
     @bytesRead = 0
 
   connect: ->
@@ -14,6 +14,8 @@ module.exports = class BinaryJSClient
     #fakeLagDown = fakeLagUp = 0
     #client = new BinaryClient
     client = new WebSocket('ws://'+location.host+'/binary')
+    client.binaryType = 'arraybuffer'
+
     client.onopen = =>
       console.log 'connected to server'
 
@@ -27,8 +29,11 @@ module.exports = class BinaryJSClient
       raw = e.data
       
       if typeof raw != 'string'
-        console.warn 'binary'
-        @bytesRead += raw.byteLength
+        @bytesRead += raw.size
+        
+        setTimeout =>
+          @game.trigger 'binary', raw
+        , fakeLagDown
       else
         @bytesRead += raw.length
         data = JSON.parse(raw)

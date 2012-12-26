@@ -44,6 +44,9 @@ class NetworkedPlayer
   sendGameData: (d) ->
     @sendControl 'update', d
   
+  sendBinaryGameData: (buffer) ->
+    @socket.send new Uint8Array(buffer), binary: true
+  
   sendControl: ->
     @socket.send JSON.stringify(arguments)
 
@@ -56,7 +59,13 @@ class Match
   constructor: (Game) ->
     @players = []
     
-    @game = new Game onServer: true
+    @game = new Game
+    @game.useBinary = true
+
+    @game.bind 'binary', (e) =>
+      _(@players).each (player) ->
+        player.sendBinaryGameData e
+
     @game.bind 'publish', (e) =>
       _(@players).each (player) ->
         player.sendGameData e

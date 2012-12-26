@@ -1,22 +1,35 @@
 _                 = require 'underscore'
 GameCommon          = require './helpers/GameCommon'
+WorldMutation = require './helpers/WorldMutation'
 
 module.exports = class GameOnClient extends GameCommon
-  constructor: ->
+  constructor: (options) ->
     super
-
+    @options = options
+    
     @serverUpdates = {}
+
+    if @options.useBinary
+      @bind 'binary', (data) =>
+        @dataReceivedSinceTick += data.byteLength
+        @lastBinary = data
 
     @bind 'update', (e, size) =>
       @log "client got update ", e
 
+      @dataReceivedSinceTick += size if size
+      
       if e.entityMutation
-        @dataReceivedSinceTick += size if size
         @serverUpdates[e.tick] = e
         @lastReceivedUpdateTicks = e.tick # websockets have guaranteed order
+      else if @options.useBinary && e.binaryMutationAside
+        e.entityMutation = WorldMutation.fromBinaryComponents(@world, @lastBinary, e.binaryMutationAside)
+        @lastBinary = null
+        @serverUpdates[e.tick] = e
+        @lastReceivedUpdateTicks = e.tick # websockets have guaranteed order
+      else
+        console.warn "update without entityMutation", e
 
-      @run() if e.run
-    
     @clientLag = 0
     @clientLagTotal = 0
     @lastReceivedUpdateTicks = -1

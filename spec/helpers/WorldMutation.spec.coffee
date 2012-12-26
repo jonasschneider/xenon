@@ -31,6 +31,14 @@ describe 'WorldMutation', ->
     
 
   describe 'binary', ->
+    it 'records an empty change', ->
+      world = new World MyEntity: MyEntity
+      anotherWorld = new World MyEntity: MyEntity
+      
+      baseMutation = world.mutate ->
+
+      c = baseMutation.getBinaryComponents()
+    
     it 'records attribute changes', ->
       world = new World MyEntity: MyEntity
       anotherWorld = new World MyEntity: MyEntity
