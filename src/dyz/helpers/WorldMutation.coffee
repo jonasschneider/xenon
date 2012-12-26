@@ -3,8 +3,12 @@ module.exports = class WorldMutation
     if stuff instanceof WorldMutation
       stuff
     else
+      console.log "deserializing #{stuff}"
       # assume it's coming from asJSON()
-      new WorldMutation(world, stuff)
+      @fromAsJSON(world, stuff)
+
+  @fromAsJSON: (world, obj) ->
+    new WorldMutation(world, obj)
   
   constructor: (world, changes) ->
     @world = world
@@ -12,9 +16,14 @@ module.exports = class WorldMutation
 
   getChanges: ->
     @changes
-  
-  record: ->
-    console.log arguments
 
   asJSON: ->
     @changes
+
+  # BINARY
+
+  getBinaryComponents: ->
+    [new ArrayBuffer(1), @asJSON()]
+
+  @fromBinaryComponents: (world, bin, json) ->
+    new WorldMutation(world, json)

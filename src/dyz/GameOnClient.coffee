@@ -7,11 +7,11 @@ module.exports = class GameOnClient extends GameCommon
 
     @serverUpdates = {}
 
-    @bind 'update', (e) =>
-      @log "client got update ", JSON.stringify(e)
+    @bind 'update', (e, size) =>
+      @log "client got update ", e
 
       if e.entityMutation
-        @dataReceivedSinceTick += JSON.stringify(e).length
+        @dataReceivedSinceTick += size if size
         @serverUpdates[e.tick] = e
         @lastReceivedUpdateTicks = e.tick # websockets have guaranteed order
 

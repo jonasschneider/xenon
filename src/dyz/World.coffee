@@ -147,9 +147,10 @@ module.exports = class World
     @state.interpolationCheckpoint()
 
   #
-  # STATE PROXIES, SNAPSHOTS
+  # MUTATIONS & SNAPSHOTS
   #
 
+  # mutate the state, and then convert to our custom WorldMutation object
   mutate: (mutator) ->
     changes = @state.mutate mutator
     new WorldMutation(this, changes)
