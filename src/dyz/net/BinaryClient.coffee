@@ -24,16 +24,16 @@ module.exports = class BinaryJSClient
         , fakeLagUp
 
     client.onmessage = (e) =>
-      data = e.data
+      raw = e.data
       
-      #console.warn "onmessage '#{data}'", data, arguments, typeof data
-
-      if typeof data != 'string'
+      if typeof raw != 'string'
         console.warn 'binary'
-        @bytesRead += data.byteLength
+        @bytesRead += raw.byteLength
       else
-        @bytesRead += data.length
-        data = JSON.parse(data)
+        @bytesRead += raw.length
+        data = JSON.parse(raw)
+        console.warn "onmessage '#{raw}'", data, arguments, typeof data if data[0] != 'update'
+
         
         switch data[0] 
           when 'update'
@@ -56,6 +56,7 @@ module.exports = class BinaryJSClient
 
           when 'setLocalPlayerId'
             @localPlayerId = data[1]
+            console.log 'localPlayer set: ', data[1]
 
           else
             console.error("unrecognized")

@@ -5,7 +5,6 @@ module.exports = class WorldMutation
     if stuff instanceof WorldMutation
       stuff
     else
-      console.log "deserializing #{stuff}"
       # assume it's coming from asJSON()
       @fromAsJSON(world, stuff)
 

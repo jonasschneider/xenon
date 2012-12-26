@@ -92,7 +92,7 @@ module.exports = class Entity
   interpolate: (attr, time) ->
     #console.log time, @collection.tickStartedAt, @collection.tickLength
     fraction = (time - @collection.tickStartedAt) / @collection.tickLength
-    key = @collection._generateAttrKey(@id, attr)
+    key = @collection._generateAttrKey(@id, @attributeIndex[attr])
     @collection.state.interpolate key, fraction
     #console.log(fraction)
 

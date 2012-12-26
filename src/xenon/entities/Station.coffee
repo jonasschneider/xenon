@@ -14,7 +14,7 @@ module.exports = class Station extends Entity
     @activeShips = 0
 
   update: (playerInput) ->
-    if @ticks() % 10 == 0 && @activeShips < 30 
+    if @ticks() % 10 == 0 && @activeShips < 30
       @activeShips++
       s = @collection.spawn 'Ship',
         position_x: @get('position_x')
