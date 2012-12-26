@@ -11,6 +11,7 @@ module.exports = class World
 
     @types = {}
     @nextEntityIds = {}
+    @nextNetworkId = 1
     @state = new WorldState
 
     @state.registerEvent 'remove', _(@remove).bind(this)
@@ -40,8 +41,9 @@ module.exports = class World
       newId = attributes.id
       delete attributes.id
     else
-      num = @nextEntityIds[type]++
-      newId = type + '_' + num
+      newId = @nextNetworkId++
+
+    attributes.humanId = type + '_' + @nextEntityIds[type]++
 
     ent = new klass this, newId
     ent.entityTypeName = type
@@ -73,14 +75,14 @@ module.exports = class World
 
     @state.recordEvent 'remove', id
     
+
+    for attr in _(ent.attributeSpecs).keys()
+      k = @_generateAttrKeyFromAttrName(id, attr)
+      @state.unset k
+
     idx = @entities.indexOf(ent)
     @entities.splice(idx, 1)
     delete @entitiesById[ent.id]
-
-    for attr in _(ent.attributeSpecs).keys()
-      k = @_generateAttrKey(id, attr)
-      @state.unset k
-
     null
 
   getEntitiesOfType: (typename) ->
@@ -94,24 +96,26 @@ module.exports = class World
   # ENTITY ATTRIBUTES
   #
 
-  getEntityAttribute: (entId, attr) ->
+  getEntityAttribute: (entId, attrId) ->
     throw "on get: unknown ent #{entId}" unless @get(entId)
-    key = @_generateAttrKey(entId, attr)
+    key = @_generateAttrKey(entId, attrId)
     @state.get key
 
-  setEntityAttribute: (entId, attr, value) ->
+  setEntityAttribute: (entId, attrId, value) ->
     ent = @get(entId)
     unless ent
       console.trace()
       throw "on set: unknown ent #{entId}" 
-    key = @_generateAttrKey(entId, attr)
-    @state.set key, value
+    key = @_generateAttrKey(entId, attrId)
+    @state.set key, value, {id: ent.id, attr: attrId}
     ent.trigger 'change'
     value
 
-  _generateAttrKey: (entId, attr) ->
-    # TODO: here we can enum
-    entId+'$'+attr
+  _generateAttrKey: (entId, attrId) ->
+    entId+'$'+attrId
+
+  _generateAttrKeyFromAttrName: (entId, attr) ->
+    @_generateAttrKey entId, @get(entId).attributeIndex[attr]
 
   _parseAttrKey: (key) ->
     if key.indexOf('$') > 0

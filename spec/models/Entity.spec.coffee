@@ -5,6 +5,12 @@ class EntWithAttrs extends Entity
   attributeSpecs:
     strength: 0
 
+class EntWithManyAttrs extends Entity
+  attributeSpecs:
+    a: 0
+    c: 0
+    b: 0
+
 PositionEntMixin =
   attributeSpecs:
     mixinAttr: 0
@@ -23,7 +29,7 @@ class EntWithoutAttrs extends Entity
 
 describe 'Entity', ->
   beforeEach ->
-    @world = new World EntWithAttrs: EntWithAttrs, EntWithoutAttrs: EntWithoutAttrs, EntWithMixin: EntWithMixin
+    @world = new World EntWithAttrs: EntWithAttrs, EntWithoutAttrs: EntWithoutAttrs, EntWithMixin: EntWithMixin, EntWithManyAttrs: EntWithManyAttrs
   
   it 'throws when setting undeclared attributes', ->
     ent = @world.spawn 'EntWithAttrs', strength: 10
@@ -44,7 +50,16 @@ describe 'Entity', ->
     it 'collects the attributes and returns them', ->
       fleet = @world.spawn 'EntWithAttrs'
       
-      expect(JSON.stringify fleet.attributes()).toBe '{"strength":0,"dead":false}'
+      expect(fleet.attributes().strength).toBe 0
+      expect(fleet.attributes().dead).toBe false
+  
+  describe '#attributeIndex', ->
+    it 'collects the attributes and returns them', ->
+      fleet = @world.spawn 'EntWithManyAttrs'
+      
+      expect(fleet.attributeIndex['a']).toBe(1)
+      expect(fleet.attributeIndex['c']).toBe(2)
+      expect(fleet.attributeIndex['b']).toBe(3)
   
   describe 'mixins', ->
     it 'gets the attributes provided by the mixin', ->

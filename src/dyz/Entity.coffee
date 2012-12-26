@@ -11,11 +11,16 @@ module.exports = class Entity
 
     @attributeSpecs ||= {}
     @attributeSpecs.dead = false
+    @attributeSpecs.humanId = ''
     @mixins ||= []
     _(@mixins).each (mixin) =>
       _.extend @attributeSpecs, mixin.attributeSpecs
       _.extend this, mixin.methods
-      
+    
+    i = 1
+    @attributeIndex = {}
+    _(@attributeSpecs).each (v, k) =>
+      @attributeIndex[k] = i++
 
   _initialize: ->
     @set @attributeSpecs
@@ -25,7 +30,7 @@ module.exports = class Entity
     @collection.ticks
 
   get: (attr) ->
-    v = @collection.getEntityAttribute(@id, attr)
+    v = @collection.getEntityAttribute(@id, @attributeIndex[attr])
     if v?
       v
     else
@@ -44,7 +49,7 @@ module.exports = class Entity
       throw "attempted to set undeclared attribute #{attr}" unless attr in _(@attributeSpecs).keys()
       val = attrs[attr]
       unless _.isEqual(@get(attr), val)
-        @collection.setEntityAttribute(@id, attr, val)
+        @collection.setEntityAttribute(@id, @attributeIndex[attr], val)
 
         @_changed = true
         @trigger "change:" + attr, this, val, options  unless options.silent

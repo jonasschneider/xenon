@@ -24,6 +24,12 @@ describe 'WorldMutation', ->
 
       expect(anotherWorld.entities[0].get('strength')).toBe 9001
 
+    it 'drops the annotations', ->
+      world = new World {}
+      m = new WorldMutation world, [["changed","Player_1$name","Jack",{"id":"Player_1","attr":"name"}]]
+      expect(typeof m.asJSON()[0][3]).toBe 'undefined'
+    
+
   describe 'binary', ->
     it 'records attribute changes', ->
       world = new World MyEntity: MyEntity
@@ -39,6 +45,7 @@ describe 'WorldMutation', ->
       json_part = JSON.parse(JSON.stringify(c[1]))
       
       reconstructed = WorldMutation.fromBinaryComponents(world, bin_part, json_part)
+      console.log reconstructed
       anotherWorld.applyMutation(reconstructed)
 
       expect(anotherWorld.entities[0].get('strength')).toBe 9001

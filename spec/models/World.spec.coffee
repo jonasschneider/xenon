@@ -64,12 +64,12 @@ describe 'World', ->
 
   describe '#snapshotFull', ->
     it "works", ->
-      @world.spawn 'MyEntity', strength: 1337
+      e = @world.spawn 'MyEntity', strength: 1337
 
       @anotherWorld.applyFullSnapshot @world.snapshotFull()
 
-      expect(@anotherWorld.get('MyEntity_1') instanceof MyEntity).toBe true
-      expect(@anotherWorld.get('MyEntity_1').get 'strength').toBe 1337
+      expect(@anotherWorld.get(e.id) instanceof MyEntity).toBe true
+      expect(@anotherWorld.get(e.id).get 'strength').toBe 1337
 
   describe '#remove', ->
     it "works", ->
