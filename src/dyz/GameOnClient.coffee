@@ -88,6 +88,7 @@ module.exports = class GameOnClient extends GameCommon
       totalUpdateSize: @dataReceivedSinceTick
       clientProcessingTime: (endTime-startTime)
       serverProcessingTime: (lastAppliedUpdate || {serverProcessingTime: 0}).serverProcessingTime
+      lastServerTotalTime: (lastAppliedUpdate || {lastTotalTime: 0}).lastTotalTime
     @dataReceivedSinceTick = 0
 
     reachableTicks - @ticks

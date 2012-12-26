@@ -61,6 +61,8 @@ module.exports = class extends GameCommon
       tick: @ticks
       entityMutation: entityMutation
       serverProcessingTime: (endTime-startTime)
+      lastTotalTime: @lastTickTotalTime || 0
       syncError: syncError
 
+    @lastTickTotalTime = new Date().getTime() - startTime
     @log "=== SERVER TICKED TO #{@ticks}"

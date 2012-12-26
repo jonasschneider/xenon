@@ -81,9 +81,9 @@ module.exports = class GameNetGraphView extends Backbone.View
     for datapoint in @dataz
       i++
       continue unless datapoint
-      barHeight = datapoint.serverProcessingTime * scale + 2
+      barHeight = datapoint.lastServerTotalTime * scale + 2
 
-      if datapoint.serverProcessingTime > max
+      if datapoint.lastServerTotalTime > max
         ctx.fillStyle = 'red'
         ctx.fillRect i, @graphHeight+40-barHeight, 1, barHeight
       else
@@ -92,7 +92,7 @@ module.exports = class GameNetGraphView extends Backbone.View
 
     ctx.fillStyle = '#aaa'
     ctx.fillRect 0, @graphHeight+60, @dataPoints, 1
-    ctx.fillText ((@dataz[@dataPoints-1] || {}).serverProcessingTime or '0')+'ms s', @dataPoints, @graphHeight+60
+    ctx.fillText ((@dataz[@dataPoints-1] || {}).lastServerTotalTime or '0')+'ms s', @dataPoints, @graphHeight+60
 
     ticksPerSecond = 1000 / Game.tickLength
     updateSizeSum = 0
