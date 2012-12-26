@@ -57,12 +57,16 @@ module.exports = class extends GameCommon
 
     endTime = new Date().getTime()
 
-    @trigger 'publish', 
-      tick: @ticks
-      entityMutation: entityMutation
-      serverProcessingTime: (endTime-startTime)
-      lastTotalTime: @lastTickTotalTime || 0
-      syncError: syncError
+    if @useBinary
+      # be awesome
+      throw 'up'
+    else
+      @trigger 'publish', 
+        tick: @ticks
+        entityMutation: entityMutation.asJSON()
+        serverProcessingTime: (endTime-startTime)
+        lastTotalTime: @lastTickTotalTime || 0
+        syncError: syncError
 
     @lastTickTotalTime = new Date().getTime() - startTime
     @log "=== SERVER TICKED TO #{@ticks}"

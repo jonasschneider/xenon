@@ -1,6 +1,7 @@
 Backbone = require('backbone')
 _                     = require 'underscore'
 WorldState = require 'dyz/helpers/WorldState'
+WorldMutation = require 'dyz/helpers/WorldMutation'
 
 module.exports = class World
   constructor: (types) ->
@@ -150,10 +151,12 @@ module.exports = class World
   #
 
   mutate: (mutator) ->
-    @state.mutate mutator
+    changes = @state.mutate mutator
+    new WorldMutation(this, changes)
 
   applyMutation: (mutation) ->
-    @state.applyMutation mutation
+    m = WorldMutation.parse(this, mutation)
+    @state.applyMutation m.getChanges()
 
   snapshotAttributes: ->
     @state.makeSnapshot()
