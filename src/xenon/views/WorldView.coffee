@@ -7,9 +7,13 @@ BigAssLensFlare = require 'xenon/helpers/BigAssLensFlare'
 $ = require('jquery')
 THREE = require('three')
 
+SCREEN_WIDTH = window.innerWidth
+SCREEN_HEIGHT = window.innerHeight
+
 module.exports = class GameView extends Backbone.View
   initialize: (options) ->
     @setupScene()
+    @initComposer()
     @model.bind 'spawn', @addEntity,  this
     @subviews = []
 
@@ -37,13 +41,9 @@ module.exports = class GameView extends Backbone.View
         console.error "wtf is a #{e.entityTypeName}?", e
 
   setupScene: ->
-    # set the @scene size
-    WIDTH = window.innerWidth
-    HEIGHT = window.innerHeight
-
     # set some @camera attributes
     VIEW_ANGLE = 45
-    ASPECT = WIDTH / HEIGHT
+    ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT
     NEAR = 0.1
     FAR = 10000
 
@@ -54,12 +54,14 @@ module.exports = class GameView extends Backbone.View
     @scene.fog = new THREE.Fog( 0x000000, 3500, 15000 )
     @scene.fog.color.setHSV( 0.51, 0.6, 0.025 )
 
-    @renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } )
+    @renderer = new THREE.WebGLRenderer
+      #antialias: true
+      #alpha: true
     @renderer.setClearColor( @scene.fog.color, 1 )
 
-    @renderer.gammaInput = true
-    @renderer.gammaOutput = true
-    @renderer.physicallyBasedShading = true
+    #@renderer.gammaInput = true
+    #@renderer.gammaOutput = true
+    #@renderer.physicallyBasedShading = true
 
     console.log(@camera)
     # add the @camera to the @scene
@@ -70,7 +72,7 @@ module.exports = class GameView extends Backbone.View
     @camera.position.z = 300
 
     # start the renderer
-    @renderer.setSize WIDTH, HEIGHT
+    @renderer.setSize SCREEN_WIDTH, SCREEN_HEIGHT
 
     # attach the render-supplied DOM element
     @el = @renderer.domElement
@@ -83,7 +85,10 @@ module.exports = class GameView extends Backbone.View
     pointLight.position.x = 10
     pointLight.position.y = 50
     pointLight.position.z = 130
-
+    
+    #effectFXAA = new THREE.ShaderPass THREE.FXAAShader
+    #effectFXAA.uniforms["resolution"].value.set 1 / SCREEN_WIDTH, 1 / SCREEN_HEIGHT
+    #effectFXAA.renderToScreen = true
 
     # add to the @scene
     #@scene.add pointLight
@@ -145,13 +150,33 @@ module.exports = class GameView extends Backbone.View
     addLight 0.08, 0.825, 0.99, 500, 10, -1000
     addLight 0.995, 0.025, 0.99, 5000, 5000, -1000
 
+  initComposer: ->
+    @renderer.autoClear = false
+    renderTargetParameters =
+      minFilter: THREE.LinearFilter
+      magFilter: THREE.LinearFilter
+      #format: THREE.RGBAFormat
+      stencilBufer: false
 
-
+    renderTarget = new THREE.WebGLRenderTarget(SCREEN_WIDTH, SCREEN_HEIGHT, renderTargetParameters)
+    renderModel = new THREE.RenderPass(@scene, @camera)
+    effectBloom = new THREE.BloomPass(1.2)
+    effectBleach = new THREE.ShaderPass(THREE.BleachBypassShader)
+    effectFilm = new THREE.FilmPass(0.25, 0.25, 2048, false)
+    effectBleach.uniforms["opacity"].value = 0.6
+    effectFilm.renderToScreen = true
+    @composer = new THREE.EffectComposer(@renderer, renderTarget)
+    @composer.addPass renderModel
+    @composer.addPass effectBloom
+    @composer.addPass effectBleach
+    @composer.addPass effectFilm
     
-  render: (time) ->
+  render: (time, delta) ->
     #@sphere.rotation.x += 0.01;
     #@sphere.rotation.y += 0.01;
     @camera.rotation.y += 0.001;
 
     view.render && view.render(time) for view in @subviews
-    @renderer.render(@scene, @camera);
+    
+    #@renderer.render(@scene, @camera)
+    @composer.render(delta)
