@@ -12,6 +12,7 @@ module.exports = class GameOnClient extends GameCommon
     if @options.useBinary
       @bind 'binary', (data) =>
         @dataReceivedSinceTick += data.byteLength
+        @binaryReceivedSinceTick += data.byteLength
         @lastBinary = data
 
     @bind 'update', (e, size) =>
@@ -35,6 +36,7 @@ module.exports = class GameOnClient extends GameCommon
     @lastReceivedUpdateTicks = -1
     @lastAppliedUpdateTicks = 0
     @dataReceivedSinceTick = 0
+    @binaryReceivedSinceTick = 0
 
     @commandQueue = []
   
@@ -99,10 +101,11 @@ module.exports = class GameOnClient extends GameCommon
 
     @trigger 'instrument:client-tick', 
       totalUpdateSize: @dataReceivedSinceTick
+      binaryUpdateSize: @binaryReceivedSinceTick
       clientProcessingTime: (endTime-startTime)
       serverProcessingTime: (lastAppliedUpdate || {serverProcessingTime: 0}).serverProcessingTime
       lastServerTotalTime: (lastAppliedUpdate || {lastTotalTime: 0}).lastTotalTime
-    @dataReceivedSinceTick = 0
+    @dataReceivedSinceTick = @binaryReceivedSinceTick = 0
 
     reachableTicks - @ticks
   

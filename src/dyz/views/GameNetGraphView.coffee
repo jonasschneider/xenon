@@ -96,23 +96,23 @@ module.exports = class GameNetGraphView extends Backbone.View
 
     ticksPerSecond = 1000 / Game.tickLength
     updateSizeSum = 0
+    binarySizeSum = 0
     i = @dataPoints-ticksPerSecond
     while i < @dataPoints
       datapoint = @dataz[i++]
       continue unless datapoint
       updateSizeSum += datapoint.totalUpdateSize
+      binarySizeSum += datapoint.binaryUpdateSize
     kbpsIn = (updateSizeSum/1024).toFixed(1)
+    kbpsBinIn = (binarySizeSum/1024).toFixed(1)
 
     if @model.ticks % ticksPerSecond == 0
       renderedFrames = @gameView.frames - @lastFrames
       @lastFrames = @gameView.frames
       @fps = renderedFrames
     ctx.fillStyle = '#fff'
-    ctx.fillText("tick #{@model.ticks} - #{@fps} fps - #{kbpsIn}kb/s in", 10, @graphHeight+10);
-
-    expectedPassedTicks = (new Date().getTime() - @timeAtRun) / 1000 * Game.ticksPerSecond + 1
-    syncError = (@model.ticks - expectedPassedTicks).toFixed(1)
-    ctx.fillText("#{@model.world.entities.length} ents, sync error #{syncError} ticks", 10, @graphHeight+20);
-    ctx.fillText("skew #{@model.clockSkew}ms, yaw: #{@model.inputState.orientation_x.toFixed(1)}, pitch: #{@model.inputState.orientation_y.toFixed(1)}", 10, @graphHeight+30);
+    ctx.fillText("tick #{@model.ticks} - #{@fps} fps - #{@model.world.entities.length} ents", 10, @graphHeight+10)
+    ctx.fillText("#{kbpsIn}kb/s in - #{kbpsBinIn}kb/s bin in", 10, @graphHeight+20)
+    ctx.fillText("skew #{@model.clockSkew}ms, yaw: #{@model.inputState.orientation_x.toFixed(1)}, pitch: #{@model.inputState.orientation_y.toFixed(1)}", 10, @graphHeight+30)
 
     this
