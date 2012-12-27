@@ -3,7 +3,6 @@
 module.exports = class BinaryJSClient
   constructor: (Game) ->
     @game = new Game useBinary: true
-    @bytesRead = 0
 
   connect: ->
     # TODO: are Binary.js streams really framed?
@@ -29,24 +28,17 @@ module.exports = class BinaryJSClient
       raw = e.data
       
       if typeof raw != 'string'
-        @bytesRead += raw.size
-        
         setTimeout =>
           @game.trigger 'binary', raw
         , fakeLagDown
       else
-        @bytesRead += raw.length
         data = JSON.parse(raw)
-        console.warn "onmessage '#{raw}'", data, arguments, typeof data if data[0] != 'update'
-
         
         switch data[0] 
           when 'update'
-            b = @bytesRead
             setTimeout =>
-              @game.trigger 'update', data[1], b
+              @game.trigger 'update', data[1], raw.length
             , fakeLagDown
-            @bytesRead = 0
           
           when 'log'
             console.log 'Server says:', data[1]
