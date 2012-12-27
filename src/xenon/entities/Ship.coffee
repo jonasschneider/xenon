@@ -68,7 +68,9 @@ module.exports = class Ship extends Entity
         quat.multiplyVector3(rocketVel)
 
         if @ticks() % 10 == 0
-          @collection.spawn 'Rocket',
+          @collection.spawn 'Bullet',
+            launchTime: @ticks(),
+            
             position_x: @get('position_x') + rocketPos.x
             position_y: @get('position_y') + rocketPos.y
             position_z: @get('position_z') + rocketPos.z

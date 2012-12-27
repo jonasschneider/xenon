@@ -14,7 +14,7 @@ module.exports = class Rocket extends Entity
     #damage: 0
     
   update: ->
-    movement = new THREE.Vector3(65, 0, 0)
+    #movement = new THREE.Vector3(65, 0, 0)
     #o = input["orientation"]
     #quat = new THREE.Quaternion(o.x, o.y, o.z, o.w)
     #quat.multiplyVector3(movement)

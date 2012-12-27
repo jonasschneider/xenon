@@ -3,6 +3,7 @@ ShipView = require './ShipView'
 RocketView = require './RocketView'
 StationView = require './StationView'
 PlanetView = require './PlanetView'
+BulletView = require './BulletView'
 BigAssLensFlare = require 'xenon/helpers/BigAssLensFlare'
 $ = require('jquery')
 THREE = require('three')
@@ -26,6 +27,10 @@ module.exports = class GameView extends Backbone.View
 
       when 'Rocket'
         rv = new RocketView model: e, worldView: this
+        @subviews.push rv
+
+      when 'Bullet'
+        rv = new BulletView model: e, worldView: this
         @subviews.push rv
 
       when 'Station'
@@ -177,7 +182,17 @@ module.exports = class GameView extends Backbone.View
     #@sphere.rotation.y += 0.01;
     @camera.rotation.y += 0.001;
 
-    view.render && view.render(time) for view in @subviews
+    # terribly inefficient
+    remains = []
+    i = -1
+    for view in @subviews
+      i++
+      if @model.entitiesById[view.model.id] # entity still exists
+        view.render && view.render(time)
+        remains.push view
+
+    @subviews = remains
+
 
     #@renderer.render(@scene, @camera)
     @composer.render(delta)
