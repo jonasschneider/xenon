@@ -63,12 +63,10 @@ module.exports = class GameView extends Backbone.View
     #@renderer.gammaOutput = true
     #@renderer.physicallyBasedShading = true
 
-    console.log(@camera)
     # add the @camera to the @scene
     @scene.add @camera
 
-    # the @camera starts at 0,0,0
-    # so pull it back
+    # the @camera starts at 0,0,0 so pull it back
     @camera.position.z = 300
 
     # start the renderer
@@ -86,10 +84,6 @@ module.exports = class GameView extends Backbone.View
     pointLight.position.y = 50
     pointLight.position.z = 130
     
-    #effectFXAA = new THREE.ShaderPass THREE.FXAAShader
-    #effectFXAA.uniforms["resolution"].value.set 1 / SCREEN_WIDTH, 1 / SCREEN_HEIGHT
-    #effectFXAA.renderToScreen = true
-
     # add to the @scene
     #@scene.add pointLight
 
@@ -150,6 +144,7 @@ module.exports = class GameView extends Backbone.View
     addLight 0.08, 0.825, 0.99, 500, 10, -1000
     addLight 0.995, 0.025, 0.99, 5000, 5000, -1000
 
+  
   initComposer: ->
     @renderer.autoClear = false
     renderTargetParameters =
@@ -165,8 +160,14 @@ module.exports = class GameView extends Backbone.View
     effectFilm = new THREE.FilmPass(0.25, 0.25, 2048, false)
     effectBleach.uniforms["opacity"].value = 0.6
     effectFilm.renderToScreen = true
+
+
+    effectFXAA = new THREE.ShaderPass THREE.FXAAShader
+    effectFXAA.uniforms["resolution"].value.set 1 / SCREEN_WIDTH, 1 / SCREEN_HEIGHT
+    
     @composer = new THREE.EffectComposer(@renderer, renderTarget)
     @composer.addPass renderModel
+    @composer.addPass effectFXAA
     @composer.addPass effectBloom
     @composer.addPass effectBleach
     @composer.addPass effectFilm
@@ -177,6 +178,6 @@ module.exports = class GameView extends Backbone.View
     @camera.rotation.y += 0.001;
 
     view.render && view.render(time) for view in @subviews
-    
+
     #@renderer.render(@scene, @camera)
     @composer.render(delta)
