@@ -18,7 +18,7 @@ module.exports = class GameView extends Backbone.View
     throw "need client" unless @client
     @frames = 0
     
-    @container = $('#nanowar')
+    @container = $('#game')
 
     @model.world.bind 'spawn', (e) =>
       return unless e.entityTypeName == 'Player'
@@ -26,13 +26,9 @@ module.exports = class GameView extends Backbone.View
         if @client.localPlayerId == e.get('clientId')
           @localPlayer = e
 
-    $("#move-btn").click =>
-      console.warn "click occured at #{@model.ticks}"
-      @model.queueClientCommand 'moveStuff'
-
-    $("#shoot-btn").click =>
-      console.warn "click occured at #{@model.ticks}"
-      @model.queueClientCommand 'shootStuff'
+    #$("#move-btn").click =>
+    #  console.warn "click occured at #{@model.ticks}"
+    #  @model.queueClientCommand 'moveStuff'
 
     ng = new GameNetGraphView model: @model, gameView: this
     @container.append ng.render().el
