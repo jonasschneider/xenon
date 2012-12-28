@@ -47,7 +47,9 @@ module.exports = class Entity
     @_changing = true
 
     for attr of attrs
-      throw "attempted to set undeclared attribute #{attr}" unless attr in _(@attributeSpecs).keys()
+      unless attr in _(@attributeSpecs).keys()
+        console.trace()
+        throw "attempted to set undeclared attribute #{attr}" 
       val = attrs[attr]
       unless _.isEqual(@get(attr), val)
         @collection.setEntityAttribute(@id, @attributeIndex[attr], val)

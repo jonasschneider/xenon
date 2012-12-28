@@ -2,11 +2,12 @@ _              = require 'underscore'
 GameOnClient   = require 'xenon/GameOnClient'
 THREE = require 'three'
 module.exports = class CreepAI
-  constructor: (ship) ->
+  constructor: (ship, enemy) ->
     @ship = ship
     @world = ship.collection
+    @enemy = enemy
 
-    @target = @world.getEntitiesOfType('Planet')[0]
+    @target = @enemy || @world.getEntitiesOfType('Planet')[0]
 
   getInput: ->
     x = _(GameOnClient.initialInputState).clone()
@@ -27,7 +28,7 @@ module.exports = class CreepAI
       #x["move_right"] = 1
       #x["move"]["left"] = 0
     #else
-    x["attack"] = 1# if Math.random() > 0.8
+    x["attack"] = 1 if Math.random() > 0.85
       #x["move"]["right"] = 0
       #x["move_left"] = 1
       #x["move"]["forward"] = 1

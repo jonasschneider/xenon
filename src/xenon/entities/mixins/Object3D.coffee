@@ -4,13 +4,9 @@ module.exports = Object3D =
     position_y: 0
     position_z: 0
 
-    velocity_x: 0
-    velocity_y: 0
-    velocity_z: 0
-
-    rotation_x: 0
-    rotation_y: 0
-    rotation_z: 0
+    orientation_x: 0
+    orientation_y: 0
+    orientation_z: 0
   
   methods:
     # Apply the interpolated 3D position to a THREE.js mesh

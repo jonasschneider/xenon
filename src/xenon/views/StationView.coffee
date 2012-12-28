@@ -8,7 +8,7 @@ module.exports = class StationView extends Backbone.View
   initialize: (options) ->
     @worldView = options.worldView
     # set up the sphere vars
-    radius = 70
+    radius = 370
     segments = 16
     rings = 16
     

@@ -14,12 +14,14 @@ module.exports = class Station extends Entity
     @activeShips = 0
 
   update: (playerInput) ->
-    if @ticks() % 10 == 0 && @activeShips < 70# && false
+    for s in @collection.getEntitiesOfType('Station')
+      enemy = s if s != this
+    
+    if @ticks() % 10 == 0 && @activeShips < 100# && false
       @activeShips++
       s = @collection.spawn 'Ship',
         position_x: @get('position_x')
         position_y: @get('position_y')
         position_z: @get('position_z') + 100 + Math.random()*300
 
-        velocity_x: 10
-      s.ai = new CreepAI(s)
+      s.ai = new CreepAI(s, enemy)

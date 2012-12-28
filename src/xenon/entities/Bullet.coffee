@@ -1,11 +1,10 @@
 Entity = require('dyz/Entity')
-Object3D = require('./mixins/Object3D')
+BallisticObject3D = require('./mixins/BallisticObject3D')
 THREE = require('three')
 
 module.exports = class Bullet extends Entity
-  mixins: [Object3D]
-  # ballistic
-
+  mixins: [BallisticObject3D]
+  
   initialize: ->
     @fuel = 100
 
