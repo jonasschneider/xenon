@@ -1,6 +1,6 @@
 _                 = require 'underscore'
 GameCommon          = require './helpers/GameCommon'
-WorldMutation = require './helpers/WorldMutation'
+WorldStateMutation = require './helpers/WorldStateMutation'
 
 module.exports = class GameOnClient extends GameCommon
   constructor: (options) ->
@@ -24,7 +24,7 @@ module.exports = class GameOnClient extends GameCommon
         @serverUpdates[e.tick] = e
         @lastReceivedUpdateTicks = e.tick # websockets have guaranteed order
       else if @options.useBinary && e.binaryMutationAside
-        e.entityMutation = WorldMutation.fromBinaryComponents(@world, @lastBinary, e.binaryMutationAside)
+        e.entityMutation = WorldStateMutation.fromBinaryComponents(@lastBinary, e.binaryMutationAside)
         @lastBinary = null
         @serverUpdates[e.tick] = e
         @lastReceivedUpdateTicks = e.tick # websockets have guaranteed order

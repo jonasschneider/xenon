@@ -1,5 +1,6 @@
 Backbone = require('backbone')
 _        = require 'underscore'
+WorldStateMutation = require 'dyz/helpers/WorldStateMutation'
 
 module.exports = class WorldState
   constructor: ->
@@ -50,6 +51,8 @@ module.exports = class WorldState
     delete @currentMutationChanges
     d
 
+    new WorldStateMutation(d)
+
   _recordMutation: (change) ->
     if @currentMutationChanges
       @currentMutationChanges.push change
@@ -57,18 +60,19 @@ module.exports = class WorldState
       throw 'mutation outside mutate() in strict mode' if @strictMode
 
   applyMutation: (mutation) ->
-    for change in mutation
+    m = WorldStateMutation.parse(mutation)
+    for change in m.getChanges()
       if change[0] == 'changed'
         @set change[1], change[2]
       if change[0] == 'unset'
         @unset change[1]
       if change[0] == 'event'
         # fire the callback
-        @events[change[1]].apply(this, change[2])
+        @events[change[1]](change[2]...)
 
   _attributesChangedByMutation: (mutation) ->
     changed = {}
-    for change in mutation
+    for change in WorldStateMutation.parse(mutation).getChanges()
       if change[0] == "changed"
         changed[change[1]] = change[2]
     changed

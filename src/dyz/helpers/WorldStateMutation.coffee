@@ -1,35 +1,24 @@
 _ = require 'underscore'
 
-module.exports = class WorldMutation
-  @parse: (world, stuff) ->
-    if stuff instanceof WorldMutation
+module.exports = class WorldStateMutation
+  @parse: (stuff) ->
+    if stuff instanceof WorldStateMutation
       stuff
     else
       # assume it's coming from asJSON()
-      @fromAsJSON(world, stuff)
+      @fromAsJSON(stuff)
 
-  @fromAsJSON: (world, obj) ->
-    new WorldMutation(world, obj)
+  @fromAsJSON: (obj) ->
+    new WorldStateMutation(obj)
   
-  constructor: (world, changes) ->
-    @world = world
+  constructor: (changes) ->
     @changes = changes || []
 
   getChanges: ->
     @changes
 
-  _changeWithoutAnnotation: (change) ->
-    if change[0] == 'changed' && change.length > 3
-      # remove the annotation
-      change = _(change).clone()
-      change.pop()
-    change
-  
   asJSON: ->
-    memo = []
-    @changes.forEach (change) =>
-      memo.push @_changeWithoutAnnotation(change)
-    memo
+    @changes
 
   # BINARY
   # Only mutations of type 'changed' get recorded.
@@ -78,7 +67,7 @@ module.exports = class WorldMutation
           view.setFloat32 offset + 4, val
 
       else
-        aside.push(@_changeWithoutAnnotation(change))
+        aside.push change
         type = 3
         attr = ent = 0
 
@@ -87,7 +76,7 @@ module.exports = class WorldMutation
     
     [buffer, aside]
 
-  @fromBinaryComponents: (world, buffer, aside) ->
+  @fromBinaryComponents: (buffer, aside) ->
     throw new TypeError() unless buffer instanceof ArrayBuffer
     
     changes = []
@@ -115,4 +104,4 @@ module.exports = class WorldMutation
 
       offset += 8
     
-    new WorldMutation(world, changes)
+    new WorldStateMutation(changes)

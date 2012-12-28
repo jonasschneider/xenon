@@ -1,4 +1,4 @@
-WorldMutation = require('dyz/helpers/WorldMutation')
+WorldStateMutation = require('dyz/helpers/WorldStateMutation')
 World = require('dyz/World')
 Entity = require('dyz/Entity')
 
@@ -9,7 +9,7 @@ class MyEntity extends Entity
   hello: ->
     'world'
 
-describe 'WorldMutation', ->
+describe 'WorldStateMutation', ->
   describe 'JSON', ->
     it 'records attribute changes', ->
       world = new World MyEntity: MyEntity
@@ -19,16 +19,10 @@ describe 'WorldMutation', ->
         ent = world.spawn 'MyEntity'
         ent.set strength: 9001
 
-      reconstructed = WorldMutation.fromAsJSON(world, JSON.parse(JSON.stringify(baseMutation.asJSON())))
+      reconstructed = WorldStateMutation.fromAsJSON(JSON.parse(JSON.stringify(baseMutation.asJSON())))
       anotherWorld.applyMutation(reconstructed)
 
       expect(anotherWorld.entities[0].get('strength')).toBe 9001
-
-    it 'drops the annotations', ->
-      world = new World {}
-      m = new WorldMutation world, [["changed","Player_1$name","Jack",{"id":"Player_1","attr":"name"}]]
-      expect(typeof m.asJSON()[0][3]).toBe 'undefined'
-    
 
   describe 'binary', ->
     it 'records an empty change', ->
@@ -52,7 +46,7 @@ describe 'WorldMutation', ->
       expect(bin_part instanceof ArrayBuffer).toBe true
       json_part = JSON.parse(JSON.stringify(c[1]))
       
-      reconstructed = WorldMutation.fromBinaryComponents(world, bin_part, json_part)
+      reconstructed = WorldStateMutation.fromBinaryComponents(bin_part, json_part)
       console.log reconstructed
       anotherWorld.applyMutation(reconstructed)
 
