@@ -13,6 +13,15 @@ module.exports = class Ship extends Entity
     health: 100
     boarded_by_id: 0
 
+  damage: (amount) ->
+    h = @get('health')-50
+    @set health: h
+    
+    if h <= 0
+      @message 'explode'
+      @set dead: true 
+    else
+      @message 'damage'
 
   update: (playerInput) ->
     vx = @velocity_x || 0
@@ -81,15 +90,10 @@ module.exports = class Ship extends Entity
             velocity_z: rocketVel.z
     
     @set
-      #rotation_x: @get('rotation_x') + 0.05
-
       position_x: @get('position_x') + movement.x
       position_y: @get('position_y') + movement.y
       position_z: @get('position_z') + movement.z
-      
-      #velocity_x: vx
-      #velocity_y: vy
-      #velocity_z: vz
+    
     @velocity_x = vx
     @velocity_y = vy
     @velocity_z = vz

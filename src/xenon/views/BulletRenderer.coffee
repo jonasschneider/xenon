@@ -11,7 +11,7 @@ module.exports = class BulletRenderer
     @particles = new THREE.Geometry()
     pMaterial = new THREE.ParticleBasicMaterial
       color: 0xFFFFFF
-      size: 100
+      size: 180
       map: THREE.ImageUtils.loadTexture "/images/particles/ball.png"
       blending: THREE.AdditiveBlending,
       transparent: true

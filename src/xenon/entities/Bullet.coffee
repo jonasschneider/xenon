@@ -30,8 +30,7 @@ module.exports = class Bullet extends Entity
       targetpos.subSelf(shippos)
 
       if(targetpos.length()) < 500
-        target.message 'explode'
-        target.set color: 0x00FF00
+        target.damage(50)
     
     @set dead: true
 

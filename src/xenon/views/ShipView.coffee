@@ -19,7 +19,10 @@ module.exports = class ShipView extends Backbone.View
     @model.bind 'explode', =>
       pos = new THREE.Vector3 @model.get('position_x'), @model.get('position_y'), @model.get('position_z')
       @worldView.subviews.push new ExplosionView worldView: @worldView, pointOfExplosion: pos, baseColor: @model.get('color')
-      console.log 'kaboom!'
+
+    @model.bind 'damage', =>
+      pos = new THREE.Vector3 @model.get('position_x'), @model.get('position_y'), @model.get('position_z')
+      @worldView.subviews.push new ExplosionView worldView: @worldView, pointOfExplosion: pos, baseColor: @model.get('color'), size: 0.3
 
     @model.bind 'change', =>
       c = @model.get('color') || 0x00FF00

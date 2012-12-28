@@ -4,11 +4,12 @@ module.exports = class ExplosionView
   constructor: (options) ->
     @worldView = options.worldView
     @pointOfExplosion = options.pointOfExplosion
+    @size = options.size || 1
     
     @particles = new THREE.Geometry()
     pMaterial = new THREE.ParticleBasicMaterial
       color: 0xFFFFFF
-      size: 300
+      size: 300*@size
       map: THREE.ImageUtils.loadTexture "/images/particles/ball.png"
       blending: THREE.AdditiveBlending,
       transparent: true
@@ -17,7 +18,7 @@ module.exports = class ExplosionView
     #@particleSystem = particleSystem = new THREE.ParticleSystem(@particles, pMaterial)
 
 
-    for i in [0..50]
+    for i in [0..50*@size]
       p = new THREE.Vector3 Math.random()*100-50, Math.random()*100-50, Math.random()*100-50
 
       @particles.vertices.push p
@@ -30,10 +31,10 @@ module.exports = class ExplosionView
     mod4 = new THREE.Color().setHSV(basehsv.h, basehsv.s/2, 0.4)
 
     parameters = [
-      [mod1.getHex(), 5],
-      [mod2.getHex(), 3],
-      [mod3.getHex(), 2],
-      [mod4.getHex(), 1]
+      [mod1.getHex(), 5*@size],
+      [mod2.getHex(), 3*@size],
+      [mod3.getHex(), 2*@size],
+      [mod4.getHex(), 1*@size]
     ]
     #parameters = [ [ 0xff0000, 5 ], [ 0xff3300, 4 ], [ 0xff6600, 3 ], [ 0xff9900, 2 ], [ 0xffaa00, 1 ] ];
     #parameters = [ [ 0xffffff, 5 ], [ 0xdddddd, 4 ], [ 0xaaaaaa, 3 ], [ 0x999999, 2 ], [ 0x777777, 1 ] ];
@@ -41,9 +42,9 @@ module.exports = class ExplosionView
     @systems = []
     @mats = []
 
-    for [hex, size] in parameters
+    for [hex, psize] in parameters
       #materials[i] = new THREE.ParticleBasicMaterial( { color: color, size: size } );
-      mat = new THREE.ParticleBasicMaterial(size: size*20)
+      mat = new THREE.ParticleBasicMaterial(size: psize*20)
       mat.color = new THREE.Color hex
       ps = new THREE.ParticleSystem @particles, mat
       ps.rotation.x = Math.random() * 6
@@ -66,7 +67,7 @@ module.exports = class ExplosionView
     @dead = true
 
   render: (time) ->
-    fac = Math.pow(1.4, 1+(time - @startTime)/100)
+    fac = Math.pow(2.4-1/@size, 1+(time - @startTime)/100)
     for ps in @systems
       ps.scale = new THREE.Vector3(1,1,1).multiplyScalar fac*(1+Math.random()*0.2-0.1)
 
