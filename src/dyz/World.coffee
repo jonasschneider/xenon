@@ -131,6 +131,9 @@ module.exports = class World
   _touchChangedEntity: (key) ->
     if [entId, attr] = @_parseAttrKey(key)
       @get(entId).trigger 'change'
+      if attr == 'rotation_z'
+        console.log entId, attrId, value
+        console.trace() 
 
 
 

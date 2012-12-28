@@ -14,10 +14,10 @@ module.exports = class Ship extends Entity
 
 
   update: (playerInput) ->
-    vx = @get('velocity_x')
+    vx = @velocity_x || 0
     ax = 5
 
-    vz = @get('velocity_z')
+    vz = @velocity_z || 0
     az = 5
 
     vy = 0
@@ -33,24 +33,24 @@ module.exports = class Ship extends Entity
     # get the input from the ship's owner or from the AI
     if input = getInput()
       if input["move_forward"] == 1 
-        vz -= az if @get('velocity_z') > -100
+        vz -= az if @velocity_z > -100
       else
-        vz += az if @get('velocity_z') < 0
+        vz += az if @velocity_z < 0
 
       if input["move_back"] == 1
-        vz += az if @get('velocity_z') < 100
+        vz += az if @velocity_z < 100
       else
-        vz -= az if @get('velocity_z') > 0
+        vz -= az if @velocity_z > 0
 
       if input["move_right"] == 1
-        vx += ax if @get('velocity_x') < 100
+        vx += ax if @velocity_x < 100
       else
-        vx -= ax if @get('velocity_x') > 0
+        vx -= ax if @velocity_x > 0
 
       if input["move_left"] == 1 
-        vx -= ax if @get('velocity_x') > -100
+        vx -= ax if @velocity_x > -100
       else
-        vx += ax if @get('velocity_x') < 0
+        vx += ax if @velocity_x < 0
 
     
       movement = new THREE.Vector3(vx, vy, vz)
@@ -59,7 +59,7 @@ module.exports = class Ship extends Entity
       quat.multiplyVector3(movement)
 
       if input["attack"]
-        if Math.random() < 0.1
+        if Math.random() < 0.1 || 1
           # rocket position relative to ship
           rocketPos = new THREE.Vector3(0,0,-100 - Math.random()*300)
           quat.multiplyVector3(rocketPos)
@@ -86,6 +86,9 @@ module.exports = class Ship extends Entity
       position_y: @get('position_y') + movement.y
       position_z: @get('position_z') + movement.z
       
-      velocity_x: vx
-      velocity_y: vy
-      velocity_z: vz
+      #velocity_x: vx
+      #velocity_y: vy
+      #velocity_z: vz
+    @velocity_x = vx
+    @velocity_y = vy
+    @velocity_z = vz

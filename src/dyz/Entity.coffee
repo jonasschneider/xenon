@@ -41,10 +41,11 @@ module.exports = class Entity
     options or (options = {})
     return this  unless attrs
 
-    return false  if not options.silent and @validate and not @_performValidation(attrs, options)
+    #return false  if not options.silent and @validate and not @_performValidation(attrs, options)
     @id = attrs[@idAttribute]  if @idAttribute of attrs
     alreadyChanging = @_changing
     @_changing = true
+
     for attr of attrs
       throw "attempted to set undeclared attribute #{attr}" unless attr in _(@attributeSpecs).keys()
       val = attrs[attr]
@@ -53,6 +54,7 @@ module.exports = class Entity
 
         @_changed = true
         @trigger "change:" + attr, this, val, options  unless options.silent
+    
     @change options  if not alreadyChanging and not options.silent and @_changed
     @_changing = false
     this

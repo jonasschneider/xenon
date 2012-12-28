@@ -37,10 +37,17 @@ module.exports = class GameView extends Backbone.View
       i=0
       for change in mut.changes
         continue unless change[0] == 'changed'
-        i++
-        if i == 50
-          old = @model.world.state.get(change[1])
-          console.log "50th 'changed' change: ", change, "changes #{change[1]} from #{old} to #{change[2]}"
+        [ent, attr] = @model.world._parseAttrKey(change[1])
+        ent = @model.world.get(ent)
+        continue unless ent
+        name=null
+        for n, id of ent.attributeIndex
+          name = n if id == attr
+        old = ent.get(name)
+        val = change[2]
+        old = old.toFixed(2) if old.toFixed
+        val = val.toFixed(2) if old.toFixed
+        console.log "#{ent.get('humanId')}.#{name}: #{old} -> #{val}"
 
       console.log 
 
