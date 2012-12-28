@@ -65,7 +65,7 @@ module.exports = class GameView extends Backbone.View
   render: (time) ->
     @frames++
     delta = @clock.getDelta()
-
+    start = new Date().getTime()
     @controls.update delta
     
     if @localPlayer
@@ -76,7 +76,9 @@ module.exports = class GameView extends Backbone.View
     @worldv.render(time, delta)
     #@canvas.getContext("2d").clearRect(0,0,700,500)
     #f.render(time) for f in @fleetvs
-
+    end = new Date().getTime()
+    if @frames % 50 == 0
+      @trigger 'instrument:render-duration', end-start
     requestAnimFrame _(@render).bind(this) unless @halt
 
   updateObjects: ->

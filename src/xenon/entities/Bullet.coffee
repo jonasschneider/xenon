@@ -18,7 +18,8 @@ module.exports = class Bullet extends Entity
   interpolatedPosition: (time) ->
     startPos = new THREE.Vector3 @get('position_x'), @get('position_y'), @get('position_z')
     trajectory = new THREE.Vector3 @get('velocity_x'), @get('velocity_y'), @get('velocity_z')
-    trajectory.multiplyScalar @ticks()-@get('launchTime')
+    fraction = (time - @collection.tickStartedAt) / @collection.tickLength
+    trajectory.multiplyScalar @ticks()-@get('launchTime') + fraction
 
     startPos.addSelf(trajectory)
 

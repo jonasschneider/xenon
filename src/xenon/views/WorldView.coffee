@@ -3,7 +3,7 @@ ShipView = require './ShipView'
 RocketView = require './RocketView'
 StationView = require './StationView'
 PlanetView = require './PlanetView'
-BulletView = require './BulletView'
+BulletRenderer = require './BulletRenderer'
 BigAssLensFlare = require 'xenon/helpers/BigAssLensFlare'
 $ = require('jquery')
 THREE = require('three')
@@ -18,8 +18,9 @@ module.exports = class GameView extends Backbone.View
     @model.bind 'spawn', @addEntity,  this
     @subviews = []
 
+
   addEntity: (e) ->
-    console.log "spawned entity", e
+    #console.log "spawned entity", e
     switch e.entityTypeName
       when 'Ship'
         shipv = new ShipView model: e, worldView: this
@@ -30,8 +31,7 @@ module.exports = class GameView extends Backbone.View
         @subviews.push rv
 
       when 'Bullet'
-        rv = new BulletView model: e, worldView: this
-        @subviews.push rv
+        @bullets.push e
 
       when 'Station'
         sv = new StationView model: e, worldView: this
@@ -149,7 +149,10 @@ module.exports = class GameView extends Backbone.View
     addLight 0.08, 0.825, 0.99, 500, 10, -1000
     addLight 0.995, 0.025, 0.99, 5000, 5000, -1000
 
-  
+    @bullets = []
+    @bulletRenderer = new BulletRenderer(@bullets, @model)
+    @scene.add @bulletRenderer.particleSystem
+
   initComposer: ->
     @renderer.autoClear = false
     renderTargetParameters =
@@ -181,6 +184,8 @@ module.exports = class GameView extends Backbone.View
     #@sphere.rotation.x += 0.01;
     #@sphere.rotation.y += 0.01;
     @camera.rotation.y += 0.001;
+
+    @bulletRenderer.update(time)
 
     # terribly inefficient
     remains = []
