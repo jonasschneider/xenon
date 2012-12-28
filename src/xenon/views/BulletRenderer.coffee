@@ -4,10 +4,10 @@ module.exports = class BulletRenderer
   resetVector: new THREE.Vector3 -1000000, 0,0
   allocateCount: 2000
 
-  constructor: (bullets, world) ->
-    @bullets = bullets
+  constructor: (world) ->
+    bullets = []
     @world = world
-    
+
     @particles = new THREE.Geometry()
     pMaterial = new THREE.ParticleBasicMaterial
       color: 0xFFFFFF
@@ -24,22 +24,21 @@ module.exports = class BulletRenderer
     @allocatedBulletVertices = 0
 
   update: (time) ->
+    bullets = @world.getEntitiesOfType('Bullet')
+    len = bullets.length
+
     # If we are over the limit, just don't display any further bullets
-    len = @bullets.length
-    if @bullets.length > @particles.vertices.length
+    if bullets.length > @particles.vertices.length
       console.error 'not enough particles allocated for bullet display'
       len = @particles.vertices.length
 
-    # This stores the next available particle a bullet could use
     nextParticle = 0
 
-    # Go through each bullet from the end of the list so we can safely delete orphans
-    for i in [len-1..0]
-      if (b=@bullets[i]) && @world.entitiesById[b.id]
-        # Yep, the bullet is actually still there, set a particle to its position
-        @particles.vertices[nextParticle++] = b.interpolatedPosition(time)
-      else
-        @bullets.splice(i,1)
+    # Move the next available particle to the position of each of the bullets
+    if len != 0
+      for i in [0..len-1]
+        bullet = bullets[i]
+        @particles.vertices[nextParticle++] = bullet.interpolatedPosition(time)
 
     # Now check if any bullets went away from last tick, we need to remove their particles
     if nextParticle < @allocatedBulletVertices
@@ -47,7 +46,7 @@ module.exports = class BulletRenderer
         @particles.vertices[nextParticle] = @resetVector
     
     # Now store how many particles are non-reset for this frame
-    @allocatedBulletVertices = @bullets.length
+    @allocatedBulletVertices = bullets.length
     
     # Finaly, tell the particle system that we've messed with its vertices.
     @particleSystem.geometry.verticesNeedUpdate = true

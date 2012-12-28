@@ -66,6 +66,7 @@ module.exports = class World
     ent.set attributes
 
     @trigger 'spawn', ent
+    @trigger 'spawn:'+ent.entityTypeName, ent
 
     ent
 
@@ -80,10 +81,10 @@ module.exports = class World
 
     ent = @get(id)
     ent.trigger 'remove'
+    @trigger 'remove', id
 
     @state.recordEvent 'remove', id
     
-
     for attr in _(ent.attributeSpecs).keys()
       k = @_generateAttrKeyFromAttrName(id, attr)
       @state.unset k
@@ -94,6 +95,7 @@ module.exports = class World
     null
 
   getEntitiesOfType: (typename) ->
+    # we could optimize this
     klass = @types[typename]
     results = []
     for ent in @entities
@@ -105,9 +107,7 @@ module.exports = class World
   #
 
   getEntityAttribute: (entId, attrId) ->
-    throw "on get: unknown ent #{entId}" unless @get(entId)
-    key = @_generateAttrKey(entId, attrId)
-    @state.get key
+    @state.get @_generateAttrKey(entId, attrId)
 
   setEntityAttribute: (entId, attrId, value) ->
     ent = @get(entId)

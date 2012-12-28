@@ -30,9 +30,6 @@ module.exports = class GameView extends Backbone.View
         rv = new RocketView model: e, worldView: this
         @subviews.push rv
 
-      when 'Bullet'
-        @bullets.push e
-
       when 'Station'
         sv = new StationView model: e, worldView: this
         @subviews.push sv
@@ -40,10 +37,6 @@ module.exports = class GameView extends Backbone.View
       when 'Planet'
         sv = new PlanetView model: e, worldView: this
         @subviews.push sv
-      when 'Player'
-        # nothing to do
-      else
-        console.error "wtf is a #{e.entityTypeName}?", e
 
   setupScene: ->
     # set some @camera attributes
@@ -149,8 +142,7 @@ module.exports = class GameView extends Backbone.View
     addLight 0.08, 0.825, 0.99, 500, 10, -1000
     addLight 0.995, 0.025, 0.99, 5000, 5000, -1000
 
-    @bullets = []
-    @bulletRenderer = new BulletRenderer(@bullets, @model)
+    @bulletRenderer = new BulletRenderer(@model)
     @scene.add @bulletRenderer.particleSystem
 
   initComposer: ->
