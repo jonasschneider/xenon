@@ -30,6 +30,20 @@ module.exports = class GameView extends Backbone.View
     #  console.warn "click occured at #{@model.ticks}"
     #  @model.queueClientCommand 'moveStuff'
 
+    @model.bind 'instrument:mutation', (mut) =>
+      console.log "== MUTATION REPORT", mut
+      console.log "#{mut.changes.length} changes, #{JSON.stringify(mut.changes).length} bytes uncompressed JSON"
+      i=0
+      for change in mut.changes
+        continue unless change[0] == 'changed'
+        i++
+        if i == 50
+          old = @model.world.state.get(change[1])
+          console.log "50th 'changed' change: ", change, "changes #{change[1]} from #{old} to #{change[2]}"
+
+      console.log 
+
+
     ng = new GameNetGraphView model: @model, gameView: this
     @container.append ng.render().el
 

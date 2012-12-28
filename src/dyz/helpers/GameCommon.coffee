@@ -67,7 +67,6 @@ module.exports = class GameCommon
       setTimeout =>
         @scheduleTick()
       , timeout
-
 _.extend(GameCommon.prototype, Backbone.Events)
 
 GameCommon.tickLength = 1000 / 20

@@ -66,6 +66,7 @@ module.exports = class GameOnClient extends GameCommon
 
       lastAppliedUpdate = @serverUpdates[next]
       if lastAppliedUpdate
+        @trigger 'instrument:mutation', lastAppliedUpdate.entityMutation if @ticks % 101 == 0
         @world.applyMutationWithInterpolationCheckpoint(lastAppliedUpdate.entityMutation)
       else
         console.error 'tried to apply mutation, but did not have dataz'
@@ -74,7 +75,6 @@ module.exports = class GameOnClient extends GameCommon
 
       if next-2 > 0
         delete @serverUpdates[next-2] # keep the mutation that led to the recent tick and the one before that
-
 
     if reachableTicks < @ticks && reachableTicks > -1 # allow catching up
       ticksToExtrapolate = @ticks - reachableTicks
