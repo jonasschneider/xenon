@@ -2,7 +2,7 @@ THREE = require('three')
 
 module.exports = class BulletRenderer
   resetVector: new THREE.Vector3 -1000000, 0,0
-  allocateCount: 500
+  allocateCount: 2000
 
   constructor: (bullets, world) ->
     @bullets = bullets

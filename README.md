@@ -147,9 +147,17 @@ Types of entities:
 - Shared entities (default)
   These entities are fully mirrored from server to client.
   If there is state that is only required on the server, it is stored in instance variables (experimental)
+
 to come:
 - Server-only entities
 - Client-only entities
+
+
+
+Types of client rendering:
+  Views <- Backbone views, persistent, bind to events
+  Renderers <- stateless, only initialize and get called in the render cycle
+
 
 
 
@@ -157,7 +165,6 @@ TODO:
   - optimize mutations so multiple changes to a single attribute during a mutate() call do not produce redundant data
   - notify an entity if its attributes are changed when applying a snapshot
   - add entity messages
-  - use protocol buffers/BinaryJS for sending the updates
   - use shaders for interpolation?
 
   https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking
