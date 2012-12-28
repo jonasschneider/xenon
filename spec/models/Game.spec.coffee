@@ -86,7 +86,7 @@ describe 'Game', ->
       game.tick()
 
       expect(output.tick).toBe 1
-      expect(JSON.stringify(output.entityMutation)).toBe "[[\"changed\",\"#{game.world._generateAttrKeyFromAttrName(p.id, 'name')}\",\"Jack\"]]"
+      expect(JSON.stringify(output.entityMutation)).toBe "[[\"changed\",#{game.world._generateAttrKeyFromAttrName(p.id, 'name')},\"Jack\"]]"
 
   describe 'lagging', ->
     it 'extrapolates', ->

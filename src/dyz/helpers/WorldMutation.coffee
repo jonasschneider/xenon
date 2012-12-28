@@ -35,15 +35,13 @@ module.exports = class WorldMutation
   # Only mutations of type 'changed' get recorded.
   # Binary format: sequential recordds, 8 bytes per record.
   # 
-  #   ----------------------------------------
-  #   |  0  |  1  |  2   3  |  4   5   6   7 |
-  #   ---|-----|-----|---------|--------------
-  #      |     |     |         |
-  #      |     |     |         \- X: Value
-  #      |     |     |
-  #      |     |     \- Uint16: Entity ID
+  #   ---------------------------------------
+  #   |  0  |  1    2   3  |  4   5   6   7 |
+  #   ---|-----|--------------|--------------
+  #      |     |              |
+  #      |     |              \- X: Value
   #      |     |
-  #      |     \- Uint8: Attribute ID 
+  #      |     \- Uint24: Key
   #      |
   #      \- Uint8: Record Type.
   #                0 = Reserved,
@@ -52,6 +50,7 @@ module.exports = class WorldMutation
   #                3 = Apply Aside Change,
   #                else reserved
   # 
+  # Key is only 20 bits (see WorldState), so the 4 high bits are always zero.
   # If Record Type is 2, pop the next change from the aside array and apply it.
   #
 
@@ -66,8 +65,7 @@ module.exports = class WorldMutation
 
     changes.forEach (change) =>
       if change[0] is 'changed' && typeof change[2] == 'number'
-        attr = change[3].attr
-        ent = change[3].id
+        key = change[1]
         val = change[2]
 
         if val % 1 == 0
@@ -84,7 +82,7 @@ module.exports = class WorldMutation
         type = 3
         attr = ent = 0
 
-      view.setUint32  offset,  (type << 24) + (attr << 16) + ent
+      view.setUint32  offset,  (type << 24) | key # spare the masking
       offset += 8
     
     [buffer, aside]
@@ -98,8 +96,7 @@ module.exports = class WorldMutation
 
     while(buffer.byteLength > offset)
       type = view.getUint8 offset
-      attr = view.getUint8 offset + 1
-      ent = view.getUint16 offset + 2
+      key = view.getUint32(offset) & (1<<21)-1
 
       if type is 1 or type is 2
         if type is 1
@@ -109,7 +106,7 @@ module.exports = class WorldMutation
           # float
           val = view.getFloat32 offset + 4
 
-        changes.push ["changed", ent.toString()+"$"+attr.toString(), val]
+        changes.push ["changed", key, val]
 
       else if type is 3
         changes.push aside.shift()

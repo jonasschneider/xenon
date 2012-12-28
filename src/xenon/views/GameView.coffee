@@ -24,6 +24,7 @@ module.exports = class GameView extends Backbone.View
       return unless e.entityTypeName == 'Player'
       e.bind 'change', =>
         if @client.localPlayerId == e.get('clientId')
+          console.log "gameview got local player", e
           @localPlayer = e
 
     #$("#move-btn").click =>

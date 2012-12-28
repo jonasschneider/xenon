@@ -112,16 +112,13 @@ module.exports = class World
     value
 
   _generateAttrKey: (entId, attrId) ->
-    entId+'$'+attrId
+    (entId << 10) | attrId
 
   _generateAttrKeyFromAttrName: (entId, attr) ->
     @_generateAttrKey entId, @get(entId).attributeIndex[attr]
 
   _parseAttrKey: (key) ->
-    if key.indexOf('$') > 0
-      key.split('$')
-    else
-      null
+    [key >> 10, key & (1<<10)-1 ]
 
   _touchChangedEntity: (key) ->
     if [entId, attr] = @_parseAttrKey(key)
@@ -177,7 +174,6 @@ module.exports = class World
       [ent.entityTypeName, attr]
 
   applyFullSnapshot: (fullSnapshot) ->
-    console.log fullSnapshot
     for [type, attributes] in fullSnapshot
       @spawn type, attributes
 

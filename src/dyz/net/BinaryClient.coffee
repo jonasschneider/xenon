@@ -47,6 +47,7 @@ module.exports = class BinaryJSClient
             client.send JSON.stringify(['pong', data[1]])
 
           when 'applySnapshotAndRun'
+            console.log 'applySnapshotAndRun', data[1]
             @game.world.applyFullSnapshot(data[1])
             @game.lastAppliedUpdateTicks = @game.ticks = data[2]
             @game.run()

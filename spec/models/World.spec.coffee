@@ -15,6 +15,14 @@ describe 'World', ->
     @world = new World { MyEntity: MyEntity, MyOtherEntity: MyOtherEntity }
     @anotherWorld = new World { MyEntity: MyEntity, MyOtherEntity: MyOtherEntity }
 
+  describe 'attribute keys', ->
+    it 'works', ->
+      expect(@world._parseAttrKey(@world._generateAttrKey(1,1))[0]).toBe 1
+      expect(@world._parseAttrKey(@world._generateAttrKey(1,1))[1]).toBe 1
+
+      expect(@world._parseAttrKey(@world._generateAttrKey(1337,255))[0]).toBe 1337
+      expect(@world._parseAttrKey(@world._generateAttrKey(1337,255))[1]).toBe 255
+  
   describe '#getEntitiesOfType', ->
     it 'works', ->
       ent =  @world.spawn 'MyEntity'
