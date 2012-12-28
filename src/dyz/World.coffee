@@ -107,7 +107,7 @@ module.exports = class World
       console.trace()
       throw "on set: unknown ent #{entId}" 
     key = @_generateAttrKey(entId, attrId)
-    @state.set key, value, {id: ent.id, attr: attrId}
+    @state.set key, value
     ent.trigger 'change'
     value
 

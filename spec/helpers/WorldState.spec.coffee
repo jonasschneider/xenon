@@ -65,17 +65,6 @@ describe 'WorldState', ->
 
       expect(@anotherState.get('a')).toBe 'b'
 
-    it 'can use #set with annotations', -> 
-      m = @state.mutate =>
-        @state.set 'a', 'b', meta: 'data'
-
-      expect(@state.get('a')).toBe 'b'
-
-      expect(m[0][3].meta).toBe('data')
-
-      @anotherState.applyMutation(m)
-
-      expect(@anotherState.get('a')).toBe 'b'
     it 'also handles events', -> 
       called = false
 

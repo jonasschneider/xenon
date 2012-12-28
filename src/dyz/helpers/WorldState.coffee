@@ -13,17 +13,14 @@ module.exports = class WorldState
   registerEvent: (name, cb) ->
     @events[name] = cb
 
-  set: (k, v, annotation) ->
+  set: (k, v) ->
     @dirty.push k
     #console.log("change #{k}: #{@internalState[k]} -> #{v}")
 
     @previousValues[k] = @internalState[k]
     @internalState[k] = v
 
-    if annotation
-      @_recordMutation ['changed', k, v, annotation]
-    else
-      @_recordMutation ['changed', k, v]
+    @_recordMutation ['changed', k, v]
     
     @onChange(k) if @onChange
 
