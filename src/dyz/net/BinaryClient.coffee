@@ -5,13 +5,12 @@ module.exports = class BinaryJSClient
     @game = new Game useBinary: true
 
   connect: ->
-    # TODO: are Binary.js streams really framed?
     console.log("connecting..")
     console.warn "faking latency"
     fakeLagDown = 90
     fakeLagUp = 130
     #fakeLagDown = fakeLagUp = 0
-    #client = new BinaryClient
+    
     client = new WebSocket('ws://'+location.host+'/binary')
     client.binaryType = 'arraybuffer'
 

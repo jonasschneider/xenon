@@ -26,7 +26,6 @@ class NetworkedPlayer
       data = JSON.parse(data)
 
       if !pinged
-        console.log "pre pong: ", arguments
         console.log "received", data, "while waiting for pong" unless data[0] == 'pong'
         @latency = new Date().getTime() - pingSentAt
         @sendControl 'log', "Your RTT is #{@latency}"
