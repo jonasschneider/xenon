@@ -1,5 +1,6 @@
 Backbone = require 'backbone'
 THREE = require('three')
+ExplosionView = require('./ExplosionView')
 
 module.exports = class ShipView extends Backbone.View
   el: true
@@ -7,7 +8,7 @@ module.exports = class ShipView extends Backbone.View
   initialize: (options) ->
     @worldView = options.worldView
     # set up the sphere vars
-    radius = 50
+    radius = 100
     segments = 16
     rings = 16
 
@@ -15,6 +16,11 @@ module.exports = class ShipView extends Backbone.View
 
     @material = new THREE.MeshLambertMaterial(color:  0xFF0000, wireframe: true)
     
+    @model.bind 'explode', =>
+      pos = new THREE.Vector3 @model.get('position_x'), @model.get('position_y'), @model.get('position_z')
+      @worldView.subviews.push new ExplosionView worldView: @worldView, pointOfExplosion: pos, baseColor: @model.get('color')
+      console.log 'kaboom!'
+
     @model.bind 'change', =>
       c = @model.get('color') || 0x00FF00
       @material.color = new THREE.Color c

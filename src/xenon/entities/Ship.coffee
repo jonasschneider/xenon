@@ -60,9 +60,9 @@ module.exports = class Ship extends Entity
       quat.multiplyVector3(movement)
 
       if input["attack"]
-        if Math.random() < 0.15
+        if @collection.ticks % 5 == 0
           # rocket position relative to ship
-          rocketPos = new THREE.Vector3(0,0,-100 - Math.random()*300)
+          rocketPos = new THREE.Vector3(0,0,-250 - Math.random()*100)
           quat.multiplyVector3(rocketPos)
 
 

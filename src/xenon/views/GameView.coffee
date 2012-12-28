@@ -47,7 +47,7 @@ module.exports = class GameView extends Backbone.View
         val = change[2]
         old = old.toFixed(2) if old.toFixed
         val = val.toFixed(2) if old.toFixed
-        console.log "#{ent.get('humanId')}.#{name}: #{old} -> #{val}"
+        #console.log "#{ent.get('humanId')}.#{name}: #{old} -> #{val}"
 
       console.log 
 

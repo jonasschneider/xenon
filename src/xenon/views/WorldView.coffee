@@ -184,9 +184,9 @@ module.exports = class GameView extends Backbone.View
     i = -1
     for view in @subviews
       i++
-      if @model.entitiesById[view.model.id] # entity still exists
+      if !view.model || @model.entitiesById[view.model.id] # entity still exists
         view.render && view.render(time)
-        remains.push view
+        remains.push view if !view.dead
 
     @subviews = remains
 
