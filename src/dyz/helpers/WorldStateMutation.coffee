@@ -69,7 +69,7 @@ module.exports = class WorldStateMutation
       else
         aside.push change
         type = 3
-        attr = ent = 0
+        key = val = 0
 
       view.setUint32  offset,  (type << 24) | key # spare the masking
       offset += 8
@@ -85,8 +85,8 @@ module.exports = class WorldStateMutation
 
     while(buffer.byteLength > offset)
       type = view.getUint8 offset
-      key = view.getUint32(offset) & (1<<21)-1
-
+      key = view.getUint32(offset) & ((1<<21)-1)
+      
       if type is 1 or type is 2
         if type is 1
           # int

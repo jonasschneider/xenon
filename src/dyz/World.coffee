@@ -1,7 +1,7 @@
 Backbone = require('backbone')
 _                     = require 'underscore'
 WorldState = require 'dyz/helpers/WorldState'
-
+LIMIT = Math.pow(2,11)-1
 module.exports = class World
   constructor: (types) ->
     throw "Need types" unless types
@@ -41,7 +41,16 @@ module.exports = class World
       delete attributes.id
     else
       newId = @nextNetworkId++
-
+      
+      if newId > LIMIT
+        # search for a new ID, TODO: optimize?
+        newId = 1
+        newId++ while @entitiesById[newId] 
+        throw 'entitiy limit reached' if newId > LIMIT
+    
+    if !newId
+      console.trace()
+      raise 'dat fail'
     attributes.humanId = type + '_' + @nextEntityIds[type]++
 
     ent = new klass this, newId
