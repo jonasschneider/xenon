@@ -7,29 +7,23 @@ module.exports = class StationView extends Backbone.View
 
   initialize: (options) ->
     @worldView = options.worldView
-    # set up the sphere vars
-    radius = 370
-    segments = 16
-    rings = 16
+    radius = 670
+    segments = 4
+    rings = 4
     
-    @material = new THREE.MeshLambertMaterial color: @model.get('color') || 0x00FF00, wireframe: true
-    @el = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, rings), @material)
-    @worldView.scene.add @el
-
+    @material = new THREE.MeshBasicMaterial color:0x00FF00, wireframe: true
+    @el = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, rings), @material)    
     @light = new THREE.PointLight(0xffffff, 1.5, 4500)
-    @model.bind 'change', =>
-      @model.applyInterpolatedPosition(@el, 0)
-      @model.applyInterpolatedPosition(@light, 0)
-      @material.color = new THREE.Color @model.get('color')
-      @light.color = new THREE.Color @model.get('color')
-    @model.applyInterpolatedPosition(@el, 0)
-    @model.applyInterpolatedPosition(@light, 0)
-    @light.color = new THREE.Color @model.get('color')
+
+    @model.bind 'change', @updateProps, this
+    @updateProps()
+
+    @worldView.scene.add @el
     @worldView.scene.add @light
     @worldView.scene.add (new BigAssLensFlare(@light)).el
 
-  render: (time) ->
-    # let's assume stations are stationary
-    #@model.applyInterpolatedPosition(@el, time)
-    #@model.applyInterpolatedPosition(@el, 0)
-    #@model.applyInterpolatedPosition(@light, 0)
+  updateProps: ->
+    c = new THREE.Color @model.get('color')
+    @model.applyInterpolatedPosition(@el, 0)
+    @model.applyInterpolatedPosition(@light, 0)
+    @material.color = @light.color = c
