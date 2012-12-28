@@ -27,7 +27,7 @@ module.exports = class CreepAI
       #x["move_right"] = 1
       #x["move"]["left"] = 0
     #else
-    #x["attack"] = 1# if Math.random() > 0.8
+    x["attack"] = 1# if Math.random() > 0.8
       #x["move"]["right"] = 0
       #x["move_left"] = 1
       #x["move"]["forward"] = 1

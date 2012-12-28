@@ -59,7 +59,7 @@ module.exports = class Ship extends Entity
       quat.multiplyVector3(movement)
 
       if input["attack"]
-        if Math.random() < 0.1 || 1
+        if Math.random() < 0.15
           # rocket position relative to ship
           rocketPos = new THREE.Vector3(0,0,-100 - Math.random()*300)
           quat.multiplyVector3(rocketPos)

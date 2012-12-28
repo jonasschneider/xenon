@@ -117,8 +117,9 @@ module.exports = class GameNetGraphView extends Backbone.View
       @fps = renderedFrames
     ctx.fillStyle = '#fff'
     ctx.fillText("tick #{@model.ticks} - #{@fps} fps - #{@renderDuration} ms/f ", 10, @graphHeight+10)
-    ctx.fillText("#{@model.world.entities.length} ents", 10, @graphHeight+20)
-    ctx.fillText("#{kbpsIn}kb/s in - #{kbpsBinIn}kb/s bin in", 70, @graphHeight+20)
+    ctx.fillText("#{@model.world.entities.length} e", 10, @graphHeight+20)
+    ctx.fillText("#{kbpsIn}kb/s", 40, @graphHeight+20)
+    ctx.fillText("#{kbpsBinIn}kb/s bin ", 80, @graphHeight+20)
     ctx.fillText("skew #{@model.clockSkew}ms, yaw: #{@model.inputState.orientation_x.toFixed(1)}, pitch: #{@model.inputState.orientation_y.toFixed(1)}", 10, @graphHeight+30)
 
     this
