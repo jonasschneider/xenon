@@ -8,6 +8,7 @@ module.exports = class Ship extends Entity
   attributeSpecs:
     name:   'Unknown Ship'
     size:   0
+    color:  0x000000
     
     health: 100
     boarded_by_id: 0
