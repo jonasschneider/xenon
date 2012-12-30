@@ -25,10 +25,10 @@ module.exports = class ExplosionView
     
     options.baseColor ||= 0xFFFFFF
     basehsv = new THREE.Color(options.baseColor).getHSV()
-    mod1 = new THREE.Color().setHSV(basehsv.h, 0.3, 0.3)
-    mod2 = new THREE.Color().setHSV(basehsv.h, basehsv.s/3, 0.6)
-    mod3 = new THREE.Color().setHSV(basehsv.h, basehsv.s/2, 0.2)
-    mod4 = new THREE.Color().setHSV(basehsv.h, basehsv.s/2, 0.4)
+    mod1 = new THREE.Color().setHSV(basehsv.h, 0.3, 0.5)
+    mod2 = new THREE.Color().setHSV(basehsv.h, basehsv.s/3, 0.9)
+    mod3 = new THREE.Color().setHSV(basehsv.h, basehsv.s/2, 0.6)
+    mod4 = new THREE.Color().setHSV(basehsv.h, basehsv.s/2, 0.7)
 
     parameters = [
       [mod1.getHex(), 5*@size],

@@ -69,5 +69,5 @@ module.exports = class GameCommon
       , timeout
 _.extend(GameCommon.prototype, Backbone.Events)
 
-GameCommon.tickLength = 1000 / 20
-GameCommon.ticksPerSecond = 1000 / GameCommon.tickLength
+GameCommon.tickLength = 1000 / 15
+GameCommon.ticksPerSecond = Math.round(1000 / GameCommon.tickLength)

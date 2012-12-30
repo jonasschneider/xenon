@@ -99,7 +99,7 @@ module.exports = class GameNetGraphView extends Backbone.View
     ctx.fillRect 0, @graphHeight+60, @dataPoints, 1
     ctx.fillText ((@dataz[@dataPoints-1] || {}).lastServerTotalTime or '0')+'ms s', @dataPoints, @graphHeight+60
 
-    ticksPerSecond = 1000 / Game.tickLength
+    ticksPerSecond = Game.ticksPerSecond
     updateSizeSum = 0
     binarySizeSum = 0
     i = @dataPoints-ticksPerSecond
@@ -115,6 +115,7 @@ module.exports = class GameNetGraphView extends Backbone.View
       renderedFrames = @gameView.frames - @lastFrames
       @lastFrames = @gameView.frames
       @fps = renderedFrames
+    
     ctx.fillStyle = '#fff'
     ctx.fillText("tick #{@model.ticks} - #{@fps} fps - #{@renderDuration} ms/f ", 10, @graphHeight+10)
     ctx.fillText("#{@model.world.entities.length} e", 10, @graphHeight+20)
