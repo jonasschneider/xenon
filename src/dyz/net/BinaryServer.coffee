@@ -3,7 +3,7 @@ _       = require 'underscore'
 Backbone= require 'backbone'
 
 ws = require 'ws'
-
+zlib = require 'zlib'
 
 id = 0
 
@@ -12,6 +12,11 @@ class NetworkedPlayer
     @socket = socket
     @name = name
     @id = ++id
+
+    @deflateStream = zlib.createDeflateRaw(chunkSize: 100*1024)
+    @deflateStream._flush = zlib.Z_SYNC_FLUSH # fire 'data' after every write()
+    @deflateStream.on 'data', (data) =>
+      @socket.send data, binary: true
 
     @sendId()
     @sendControl 'log', "You are player ##{@id}"
@@ -47,7 +52,8 @@ class NetworkedPlayer
     @socket.send new Uint8Array(buffer), binary: true
   
   sendControl: ->
-    @socket.send JSON.stringify(arguments)
+    x = JSON.stringify(arguments)
+    @deflateStream.write x.length + "|" + x
 
   sendId: ->
     @sendControl 'setLocalPlayerId', @id

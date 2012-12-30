@@ -10,7 +10,12 @@ module.exports = class BinaryJSClient
     fakeLagDown = 90
     fakeLagUp = 130
     #fakeLagDown = fakeLagUp = 0
-    
+    #compressionStream = new (require('lzw').Stream)
+    @bytesReadCompressed = 0
+    @bytesReadUncompressed = 0
+    @inflater = new (require('inflater'))
+    buffer = ''
+
     client = new WebSocket('ws://'+location.host+'/binary')
     client.binaryType = 'arraybuffer'
 
@@ -25,35 +30,58 @@ module.exports = class BinaryJSClient
 
     client.onmessage = (e) =>
       raw = e.data
+      throw "no arraybuffer" unless raw instanceof ArrayBuffer
+      @bytesReadCompressed += raw.byteLength
+
+      #console.info "received #{raw.byteLength}, total #{@bytesReadCompressed}"
       
-      if typeof raw != 'string'
-        setTimeout =>
-          @game.trigger 'binary', raw
-        , fakeLagDown
-      else
-        data = JSON.parse(raw)
-        
-        switch data[0] 
-          when 'update'
-            setTimeout =>
-              @game.trigger 'update', data[1], raw.length
-            , fakeLagDown
+      uncompressedData = @inflater.append new Uint8Array(raw)
+      throw 'inflate failed' if uncompressedData == -1
+      string = String.fromCharCode.apply(null, uncompressedData)
+      @bytesReadUncompressed += string.length
+      buffer += string
+      
+      while (match = /(\d+)\|(.*)/.exec(buffer)) && match[2].length.toString() == match[1]
+        # Yep, we have enough stuff in the buffer
+        offset = match[1].length+1
+        len = parseInt(match[1])
+
+        consume buffer.substring(offset,offset+len)
+        buffer = buffer.substring(offset+len)
+
+    consume = (string) =>
+      try 
+        data = JSON.parse string
+      catch e
+        console.log string
+        throw e
+      
+      switch data[0] 
+        when 'update'
+          c = @bytesReadCompressed
+          u = @bytesReadUncompressed
+          @bytesReadCompressed = @bytesReadUncompressed = 0
           
-          when 'log'
-            console.log 'Server says:', data[1]
+          setTimeout =>
+            @game.trigger 'update', data[1], c, u
 
-          when 'ping'
-            client.send JSON.stringify(['pong', data[1]])
+          , fakeLagDown
+        
+        when 'log'
+          console.log 'Server says:', data[1]
 
-          when 'applySnapshotAndRun'
-            console.log 'applySnapshotAndRun', data[1]
-            @game.world.applyFullSnapshot(data[1])
-            @game.lastAppliedUpdateTicks = @game.ticks = data[2]
-            @game.run()
+        when 'ping'
+          client.send JSON.stringify(['pong', data[1]])
 
-          when 'setLocalPlayerId'
-            @localPlayerId = data[1]
-            console.log 'localPlayer set: ', data[1]
+        when 'applySnapshotAndRun'
+          console.log 'applySnapshotAndRun', data[1]
+          @game.world.applyFullSnapshot(data[1])
+          @game.lastAppliedUpdateTicks = @game.ticks = data[2]
+          @game.run()
 
-          else
-            console.error("unrecognized")
+        when 'setLocalPlayerId'
+          @localPlayerId = data[1]
+          console.log 'localPlayer set: ', data[1]
+
+        else
+          console.error("unrecognized")

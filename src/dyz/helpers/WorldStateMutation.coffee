@@ -17,6 +17,22 @@ module.exports = class WorldStateMutation
   getChanges: ->
     @changes
 
+  getDeduplicatedChanges: ->
+    return [] if @changes.length == 0
+    deduplicated = []
+    changedKeys = []
+    for i in [@changes.length-1..0]
+      c = @changes[i]
+      unless c[0] == 'changed'
+        deduplicated.unshift c 
+      else
+        if changedKeys.indexOf(c[1]) == -1
+          changedKeys.push c[1]
+          deduplicated.unshift c
+    
+    deduplicated
+
+
   asJSON: ->
     @changes
 
@@ -44,9 +60,11 @@ module.exports = class WorldStateMutation
   #
 
   getBinaryComponents: ->
-    changes = @getChanges()
+    
+
+    #return [new Uint16Array(c).buffer, {}]
     #console.log changes
-    return [new ArrayBuffer(0), []] if changes.length == 0
+    return [new ArrayBuffer(0), changes: @getDeduplicatedChanges()]
     buffer = new ArrayBuffer(changes.length*8)
     aside = []
     offset = 0
@@ -77,6 +95,8 @@ module.exports = class WorldStateMutation
     [buffer, aside]
 
   @fromBinaryComponents: (buffer, aside) ->
+    return new WorldStateMutation(aside.changes)
+
     throw new TypeError() unless buffer instanceof ArrayBuffer
     
     changes = []

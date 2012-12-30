@@ -101,15 +101,15 @@ module.exports = class GameNetGraphView extends Backbone.View
 
     ticksPerSecond = Game.ticksPerSecond
     updateSizeSum = 0
-    binarySizeSum = 0
+    uncompressedSizeSum = 0
     i = @dataPoints-ticksPerSecond
     while i < @dataPoints
       datapoint = @dataz[i++]
       continue unless datapoint
       updateSizeSum += datapoint.totalUpdateSize
-      binarySizeSum += datapoint.binaryUpdateSize
+      uncompressedSizeSum += datapoint.uncompressedUpdateSize
     kbpsIn = (updateSizeSum/1024).toFixed(1)
-    kbpsBinIn = (binarySizeSum/1024).toFixed(1)
+    kbpsInUncompressed = (uncompressedSizeSum/1024).toFixed(1)
 
     if @model.ticks % ticksPerSecond == 0
       renderedFrames = @gameView.frames - @lastFrames
@@ -120,7 +120,7 @@ module.exports = class GameNetGraphView extends Backbone.View
     ctx.fillText("tick #{@model.ticks} - #{@fps} fps - #{@renderDuration} ms/f ", 10, @graphHeight+10)
     ctx.fillText("#{@model.world.entities.length} e", 10, @graphHeight+20)
     ctx.fillText("#{kbpsIn}kb", 40, @graphHeight+20)
-    ctx.fillText("#{kbpsBinIn}kb bin ", 80, @graphHeight+20)
+    ctx.fillText("#{kbpsInUncompressed}kb uncompressed ", 80, @graphHeight+20)
     ctx.fillText("skew #{@model.clockSkew}ms, yaw: #{@model.inputState.orientation_x.toFixed(1)}, pitch: #{@model.inputState.orientation_y.toFixed(1)}", 10, @graphHeight+30)
 
     this

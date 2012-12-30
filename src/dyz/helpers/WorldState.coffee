@@ -17,6 +17,8 @@ module.exports = class WorldState
   set: (k, v) ->
     @dirty.push k
     #console.log("change #{k}: #{@internalState[k]} -> #{v}")
+    v = Math.round(v) if typeof v == 'number'
+
 
     @previousValues[k] = @internalState[k]
     @internalState[k] = v

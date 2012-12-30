@@ -9,16 +9,11 @@ module.exports = class GameOnClient extends GameCommon
     
     @serverUpdates = {}
 
-    if @options.useBinary
-      @bind 'binary', (data) =>
-        @dataReceivedSinceTick += data.byteLength
-        @binaryReceivedSinceTick += data.byteLength
-        @lastBinary = data
-
-    @bind 'update', (e, size) =>
+    @bind 'update', (e, sizeOnWire, sizeUncompressed) =>
       @log "client got update ", e
 
-      @dataReceivedSinceTick += size if size
+      @dataOnWireReceivedSinceTick += sizeOnWire if sizeOnWire
+      @dataUncompressedReceivedSinceTick += sizeUncompressed if sizeUncompressed
       
       if e.entityMutation
         @serverUpdates[e.tick] = e
@@ -35,8 +30,8 @@ module.exports = class GameOnClient extends GameCommon
     @clientLagTotal = 0
     @lastReceivedUpdateTicks = -1
     @lastAppliedUpdateTicks = 0
-    @dataReceivedSinceTick = 0
-    @binaryReceivedSinceTick = 0
+    @dataOnWireReceivedSinceTick = 0
+    @dataUncompressedReceivedSinceTick = 0
 
     @commandQueue = []
   
@@ -100,12 +95,12 @@ module.exports = class GameOnClient extends GameCommon
 
 
     @trigger 'instrument:client-tick', 
-      totalUpdateSize: @dataReceivedSinceTick
-      binaryUpdateSize: @binaryReceivedSinceTick
+      totalUpdateSize: @dataOnWireReceivedSinceTick
+      uncompressedUpdateSize: @dataUncompressedReceivedSinceTick
       clientProcessingTime: (endTime-startTime)
       serverProcessingTime: (lastAppliedUpdate || {serverProcessingTime: 0}).serverProcessingTime
       lastServerTotalTime: (lastAppliedUpdate || {lastTotalTime: 0}).lastTotalTime
-    @dataReceivedSinceTick = @binaryReceivedSinceTick = 0
+    @dataOnWireReceivedSinceTick = @dataUncompressedReceivedSinceTick = 0
 
     reachableTicks - @ticks
   

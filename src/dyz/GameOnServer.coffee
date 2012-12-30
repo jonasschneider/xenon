@@ -65,7 +65,7 @@ module.exports = class extends GameCommon
 
     if @useBinary
       [buffer, aside] = entityMutation.getBinaryComponents()
-      @trigger 'binary', buffer
+      #@trigger 'binary', buffer
       message.binaryMutationAside = aside
     else
       message.entityMutation = entityMutation.asJSON()
