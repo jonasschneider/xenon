@@ -20,7 +20,8 @@
 
     "requirejs" :  "2.1.2",
     "backbone" :  "0.5.3",
-    "underscore" :  "1.1.7"
+    "underscore" :  "1.1.7",
+    "amdefine" :  "0.0.4"
   },
   "devDependencies": {
     "jasmine-node" :  "1.0.x"
