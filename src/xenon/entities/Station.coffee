@@ -28,7 +28,7 @@ module.exports = class Station extends Entity
     for s in @collection.getEntitiesOfType('Station')
       enemy = s if s != this
     
-    if @ticks() % 10 == 0 && @activeShips < 100# && false
+    if @ticks() % 10 == 0# && @activeShips < 100# && false
       @activeShips++
       s = @collection.spawn 'Ship',
         position_x: @get('position_x')
