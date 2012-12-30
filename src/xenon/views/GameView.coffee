@@ -32,8 +32,9 @@ module.exports = class GameView extends Backbone.View
     #  @model.queueClientCommand 'moveStuff'
 
     @model.bind 'instrument:mutation', (mut) =>
-      console.log "== MUTATION REPORT", mut
-      console.log "#{mut.changes.length} changes, #{JSON.stringify(mut.changes).length} bytes uncompressed JSON"
+      console.log "== MUTATION REPORT", mut, JSON.stringify(mut.changes)
+      uniq = _(mut.changes).chain().filter((c) -> c[0] == 'changed').map((c) -> c[1]).uniq().value().length
+      console.log "#{mut.changes.length} changes to #{uniq} keys, #{JSON.stringify(mut.changes).length} bytes uncompressed JSON"
       i=0
       for change in mut.changes
         continue unless change[0] == 'changed'
