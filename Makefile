@@ -16,6 +16,7 @@ build: node_modules
 	cp -r vendor/* compiled
 	node_modules/coffee-script/bin/coffee -c -o compiled src
 	node vendor/r -convert compiled compiled
+	node_modules/coffee-script/bin/coffee -c -o compiled/dyz/net src/dyz/net/binary_client_worker.coffee
 
 shrink:
 	node vendor/r.js -o client/buildconfig.js

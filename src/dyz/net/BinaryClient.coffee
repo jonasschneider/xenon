@@ -1,77 +1,43 @@
-#BinaryClient = require('binaryjs-client').BinaryClient
 
 module.exports = class BinaryJSClient
   constructor: (Game) ->
     @game = new Game useBinary: true
 
   connect: ->
-    console.log("connecting..")
-    console.warn "faking latency"
+    w = new Worker('/src/dyz/net/binary_client_worker.js')
+    w.onerror = ->
+      console.log 'onerror', arguments
+    
     fakeLagDown = 90
     fakeLagUp = 130
-    #fakeLagDown = fakeLagUp = 0
-    #compressionStream = new (require('lzw').Stream)
-    @bytesReadCompressed = 0
-    @bytesReadUncompressed = 0
-    @inflater = new (require('inflater'))
-    buffer = ''
 
-    client = new WebSocket('ws://'+location.host+'/binary')
-    client.binaryType = 'arraybuffer'
+    send = (data) ->
+      w.postMessage ['send', data]
 
-    client.onopen = =>
-      console.log 'connected to server'
+    @game.bind 'publish', (e) =>
+      setTimeout =>
+        send ['input', e]
+      , fakeLagUp
 
-      @game.bind 'publish', (e) =>
-        setTimeout =>
-          #todo
-          client.send JSON.stringify(['input', e])
-        , fakeLagUp
+    w.onmessage = (e) ->
+      if e.data[0] == 'consume'
+        consume(e.data[1], e.data[2], e.data[3])
+      else
+        console.error e
+        throw 'wat'
 
-    client.onmessage = (e) =>
-      raw = e.data
-      throw "no arraybuffer" unless raw instanceof ArrayBuffer
-      @bytesReadCompressed += raw.byteLength
-
-      #console.info "received #{raw.byteLength}, total #{@bytesReadCompressed}"
-      
-      uncompressedData = @inflater.append new Uint8Array(raw)
-      throw 'inflate failed' if uncompressedData == -1
-      string = String.fromCharCode.apply(null, uncompressedData)
-      @bytesReadUncompressed += string.length
-      buffer += string
-      
-      while (match = /(\d+)\|(.*)/.exec(buffer)) && match[2].length.toString() == match[1]
-        # Yep, we have enough stuff in the buffer
-        offset = match[1].length+1
-        len = parseInt(match[1])
-
-        consume buffer.substring(offset,offset+len)
-        buffer = buffer.substring(offset+len)
-
-    consume = (string) =>
-      try 
-        data = JSON.parse string
-      catch e
-        console.log string
-        throw e
-      
+    consume = (data, bytesReadCompressed, bytesReadUnompressed)  =>
       switch data[0] 
         when 'update'
-          c = @bytesReadCompressed
-          u = @bytesReadUncompressed
-          @bytesReadCompressed = @bytesReadUncompressed = 0
-          
           setTimeout =>
-            @game.trigger 'update', data[1], c, u
-
+            @game.trigger 'update', data[1], bytesReadCompressed, bytesReadUnompressed
           , fakeLagDown
         
         when 'log'
           console.log 'Server says:', data[1]
 
         when 'ping'
-          client.send JSON.stringify(['pong', data[1]])
+          send ['pong', data[1]]
 
         when 'applySnapshotAndRun'
           console.log 'applySnapshotAndRun', data[1]
