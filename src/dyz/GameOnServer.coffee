@@ -63,12 +63,7 @@ module.exports = class extends GameCommon
       lastTotalTime: @lastTickTotalTime || 0
       syncError: syncError
 
-    if @useBinary
-      [buffer, aside] = entityMutation.getBinaryComponents()
-      #@trigger 'binary', buffer
-      message.binaryMutationAside = aside
-    else
-      message.entityMutation = entityMutation.asJSON()
+    message.entityMutation = entityMutation.asJSON()
 
     @trigger 'publish', message
 

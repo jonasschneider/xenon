@@ -16,11 +16,7 @@ module.exports = class GameOnClient extends GameCommon
       @dataUncompressedReceivedSinceTick += sizeUncompressed if sizeUncompressed
       
       if e.entityMutation
-        @serverUpdates[e.tick] = e
-        @lastReceivedUpdateTicks = e.tick # websockets have guaranteed order
-      else if @options.useBinary && e.binaryMutationAside
-        e.entityMutation = WorldStateMutation.fromBinaryComponents(@lastBinary, e.binaryMutationAside)
-        @lastBinary = null
+        e.entityMutation = WorldStateMutation.parse(e.entityMutation)
         @serverUpdates[e.tick] = e
         @lastReceivedUpdateTicks = e.tick # websockets have guaranteed order
       else

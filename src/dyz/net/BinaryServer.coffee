@@ -48,9 +48,6 @@ class NetworkedPlayer
   sendGameData: (d) ->
     @sendControl 'update', d
   
-  sendBinaryGameData: (buffer) ->
-    @socket.send new Uint8Array(buffer), binary: true
-  
   sendControl: ->
     x = JSON.stringify(arguments)
     @deflateStream.write x.length + "|" + x
@@ -65,11 +62,6 @@ class Match
     @players = []
     
     @game = new Game
-    @game.useBinary = true
-
-    @game.bind 'binary', (e) =>
-      _(@players).each (player) ->
-        player.sendBinaryGameData e
 
     @game.bind 'publish', (e) =>
       _(@players).each (player) ->
@@ -82,7 +74,7 @@ class Match
     , 500
   
   addPlayer: (clientSocket) ->
-    console.log clientSocket.id + " connected"
+    console.log "client connected"
     player = new NetworkedPlayer clientSocket, ("Player " + (@players.length + 1))
     @game.onPlayerJoin player
     @players.push player

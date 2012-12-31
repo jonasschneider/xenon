@@ -1,7 +1,7 @@
 
 module.exports = class BinaryJSClient
   constructor: (Game) ->
-    @game = new Game useBinary: true
+    @game = new Game
 
   connect: ->
     w = new Worker('/src/dyz/net/binary_client_worker.js')
